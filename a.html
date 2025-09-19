@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Dictámenes</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f4f7f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            display: flex;
+            gap: 20px;
+        }
+        .left-panel {
+            flex: 2;
+            padding-right: 20px;
+            border-right: 1px solid #e0e7ee;
+        }
+        .right-panel {
+            flex: 1;
+            padding-left: 20px;
+        }
+        h1, h2, h3 {
+            text-align: center;
+            color: #1e3a8a;
+        }
+        .header-section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+        .search-filter {
+            flex-grow: 1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .search-filter input, .search-filter select {
+            flex: 1 1 200px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn.btn-warning {
+            background: linear-gradient(135deg, #f6c03b 0%, #a8821e 100%);
+        }
+        .btn.btn-info {
+            background: linear-gradient(135deg, #3bb8f6 0%, #1e6fa8 100%);
+        }
+        .btn.btn-print {
+            background: linear-gradient(135deg, #333 0%, #000 100%);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            table-layout: fixed;
+        }
+        th, td {
+            text-align: left;
+            padding: 15px;
+            border-bottom: 1px solid #e0e7ee;
+            word-wrap: break-word;
+        }
+        th {
+            background-color: #eef2f9;
+            font-weight: 600;
+            color: #4a5568;
+            cursor: pointer;
+        }
+        tr:hover {
+            background-color: #f9fafb;
+        }
+        .action-buttons button {
+            margin-right: 5px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: normal;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        .pagination button {
+            background-color: #eef2f9;
+            color: #4a5568;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .pagination button:hover:not(:disabled) {
+            background-color: #d1d8e1;
+        }
+        .pagination button:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            position: relative;
+            animation: slide-in 0.3s ease-out;
+        }
+        .modal-content.summary-modal-content {
+            max-width: 700px;
+            padding: 20px;
+        }
+        @keyframes slide-in {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .close-btn {
+            color: #aaa;
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .close-btn:hover {
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e7ee;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .form-group textarea {
+            min-height: 150px;
+            overflow-y: auto; /* Permite el desplazamiento vertical */
+        }
+        .medidas-container {
+            border: 1px solid #e0e7ee;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            background-color: #f9fafb;
+        }
+        .medida-item {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 15px;
+            border: 1px solid #e0e7ee;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background-color: #fff;
+        }
+        .remove-btn {
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .add-medida-btn {
+            background: #22c55e;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        .stats-modal {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 99;
+            width: 300px;
+            animation: fade-in 0.5s ease-out;
+        }
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .stats-modal h4 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #1e3a8a;
+            text-align: center;
+        }
+        .stats-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .stats-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .stats-list li:last-child {
+            border-bottom: none;
+        }
+        .read-only-input {
+            background-color: #f0f4f7;
+            border: 1px solid #e0e7ee;
+            cursor: not-allowed;
+        }
+        .dictamen-text-container {
+            line-height: 1.6;
+            text-align: justify;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #e0e7ee;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e0e7ee;
+            margin-bottom: 20px;
+        }
+        .tab-button {
+            background-color: transparent;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #6b7280;
+            border-bottom: 2px solid transparent;
+            transition: color 0.2s, border-bottom 0.2s;
+        }
+        .tab-button.active {
+            color: #1e3a8a;
+            font-weight: 600;
+            border-bottom: 2px solid #3b82f6;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .summary-info p {
+            margin: 5px 0;
+        }
+        .summary-info strong {
+            color: #1e3a8a;
+        }
+        .modal-print-btn {
+            margin-top: 20px;
+            width: 100%;
+        }
+        /* Ocultar elementos en la impresión */
+        @media print {
+            body > *:not(.modal) {
+                display: none;
+            }
+            .modal {
+                position: static;
+                display: block;
+                background: none;
+                width: auto;
+                height: auto;
+            }
+            .modal-content {
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                box-shadow: none;
+                animation: none;
+            }
+            .close-btn, .btn.btn-print, .form-actions, .add-medida-btn, .remove-btn, .tabs, .modal-print-btn {
+                display: none !important;
+            }
+            .medida-item, .form-group {
+                border: none !important;
+                padding: 5px 0 !important;
+            }
+        }
+        /* Media Queries para responsividad */
+        @media (max-width: 992px) {
+            .container {
+                flex-direction: column;
+            }
+            .left-panel {
+                border-right: none;
+                border-bottom: 1px solid #e0e7ee;
+                padding-right: 0;
+                padding-bottom: 20px;
+            }
+            .right-panel {
+                padding-left: 0;
+            }
+            .stats-modal {
+                position: static;
+                width: auto;
+                margin-top: 20px;
+                animation: none;
+            }
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            .header-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .search-filter {
+                flex-direction: column;
+            }
+            .modal-content {
+                width: 95%;
+                margin: 2% auto;
+                padding: 20px;
+            }
+            .btn {
+                width: 100%;
+            }
+            th, td {
+                font-size: 14px;
+                padding: 10px;
+            }
+            .action-buttons button {
+                padding: 3px 6px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="left-panel">
+        <header>
+            <h1>Registro de Dictámenes</h1>
+        </header>
+
+        <section class="header-section">
+            <div class="search-filter">
+                <input type="text" id="searchInput" placeholder="Buscar por texto...">
+                <select id="tematicaFilter">
+                    </select>
+            </div>
+            <button id="addDictamenBtn" class="btn">➕ Nuevo Dictamen</button>
+        </section>
+
+        <div class="table-container">
+            <table id="dictamenTable">
+                <thead>
+                    <tr>
+                        <th data-sort-by="numero" data-order="asc">Nº Dictamen</th>
+                        <th data-sort-by="fecha" data-order="asc">Fecha Firma</th>
+                        <th>ID SIGED</th>
+                        <th>Temática</th>
+                        <th>Juzgado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+        </div>
+        <div class="pagination">
+            <button id="prevPageBtn">Anterior</button>
+            <span id="pageInfo">Página 1 de 1</span>
+            <button id="nextPageBtn">Siguiente</button>
+        </div>
+    </div>
+
+    <div class="right-panel">
+        <h2>Estadísticas por Temática</h2>
+        <div>
+            <canvas id="dictamenChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<div id="dictamenModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2 id="modalTitle">Nuevo Dictamen</h2>
+        <form id="dictamenForm">
+            <input type="hidden" id="dictamenId" />
+            <div class="form-group">
+                <label for="numeroDictamen">Nº Dictamen:</label>
+                <input type="number" id="numeroDictamen" required readonly class="read-only-input">
+            </div>
+            <div class="form-group">
+                <label for="fechaFirma">Fecha de Firma Digital:</label>
+                <input type="date" id="fechaFirma" required>
+            </div>
+            <div class="form-group">
+                <label for="idSiged">ID SIGED:</label>
+                <input type="text" id="idSiged">
+            </div>
+            <div class="form-group">
+                <label for="causaReferencia">Causa de Referencia:</label>
+                <input type="text" id="causaReferencia">
+            </div>
+            <div class="form-group">
+                <label for="tematicaDictamen">Temática:</label>
+                <select id="tematicaDictamen" required>
+                    </select>
+            </div>
+            <div class="form-group">
+                <label for="juzgadoInterviniente">Juzgado Interviniente:</label>
+                <select id="juzgadoInterviniente" required>
+                    </select>
+            </div>
+            <div class="form-group">
+                <label for="textoDictamen">Texto del Dictamen:</label>
+                <textarea id="textoDictamen" required maxlength="10000"></textarea>
+            </div>
+            <div class="medidas-container">
+                <h3>Medidas Sugeridas</h3>
+                <div id="medidasList"></div>
+                <button type="button" class="btn add-medida-btn" id="addMedidaBtn">➕ Agregar Medida</button>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn" id="submitBtn">Guardar Dictamen</button>
+                <button type="button" class="btn btn-print" id="printBtn">🖨️ Imprimir</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="summaryModal" class="modal">
+    <div class="modal-content summary-modal-content">
+        <span class="close-btn">&times;</span>
+        <div class="tabs">
+            <button class="tab-button active" data-tab-id="summary">Resumen</button>
+            <button class="tab-button" data-tab-id="text">Texto Dictamen</button>
+        </div>
+        <div id="summary" class="tab-content active">
+            <h2>Resumen del Dictamen</h2>
+            <div id="summaryContent" class="summary-info"></div>
+        </div>
+        <div id="text" class="tab-content">
+            <h2>Texto del Dictamen</h2>
+            <div id="dictamenTextContent" class="dictamen-text-container"></div>
+        </div>
+        <button type="button" class="btn btn-print modal-print-btn" id="modalPrintBtn">🖨️ Imprimir</button>
+    </div>
+</div>
+
+<div id="statsModal" class="stats-modal">
+    <h4>Cantidades por Temática</h4>
+    <ul id="statsList" class="stats-list"></ul>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let dictamenes = [];
+
+        const juzgadosPorTematica = {
+            "Civil": ["Juzgado Civil y Comercial N° 1 - Posadas","Juzgado Civil y Comercial N° 2 - Posadas","Juzgado Civil y Comercial N° 3 - Posadas","Juzgado Civil y Comercial N° 4 - Posadas","Juzgado Civil y Comercial N° 5 - Posadas","Juzgado Civil y Comercial N° 6 - Posadas","Juzgado Civil y Comercial N° 7 - Posadas","Juzgado Civil y Comercial N° 8 - Posadas","... Civil Comercial Laboral Familia y Violencia Fliar- Apostoles"],
+            "Penal": ["Juzgado de Instrucción N° 1 - Posadas","Juzgado de Instrucción N° 2 - Posadas","Juzgado de Instrucción N° 3 - Posadas","Juzgado de Instrucción N° 6 - Posadas","Juzgado de Instrucción N° 7 - Posadas","Juzgado Correccional y de Menores N° 1 - Posadas","Juzgado Correccional y de Menores N° 2 - Posadas","Tribunal Penal N° 1 - Posadas", "Tribunal Penal N° 2 - Posadas"],
+            "Laboral": ["Juzgado Laboral N° 1 - Posadas","Juzgado Laboral N° 2 - Posadas","Juzgado Laboral N° 3 - Posadas","Juzgado Laboral N° 4 - Posadas"],
+            "Familia": ["Juzgado de Familia N° 1 - Posadas","Juzgado de Familia N° 2 - Posadas","Juzgado de Familia N° 3 - Posadas","Juzgado Familia y VF Garupa", "... Civil Comercial Laboral Familia y Violencia Fliar- Apostoles"],
+            "Violencia Familiar": ["Juzgado de Violencia Familiar N° 1 - Posadas","Juzgado de Violencia Familiar N° 2 - Posadas","Juzgado F y Violencia Familiar Garupa","... Civil Comercial Laboral Familia y Violencia Fliar- Apostoles"],
+        };
+        const thematicAreas = Object.keys(juzgadosPorTematica);
+
+        const tableBody = document.querySelector('#dictamenTable tbody');
+        const searchInput = document.getElementById('searchInput');
+        const tematicaFilter = document.getElementById('tematicaFilter');
+        const dictamenTematicaSelect = document.getElementById('tematicaDictamen');
+        const juzgadoIntervinienteSelect = document.getElementById('juzgadoInterviniente');
+        const dictamenModal = document.getElementById('dictamenModal');
+        const summaryModal = document.getElementById('summaryModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const addBtn = document.getElementById('addDictamenBtn');
+        const closeBtns = document.querySelectorAll('.close-btn');
+        const dictamenForm = document.getElementById('dictamenForm');
+        const medidasList = document.getElementById('medidasList');
+        const addMedidaBtn = document.getElementById('addMedidaBtn');
+        const statsList = document.getElementById('statsList');
+        const prevPageBtn = document.getElementById('prevPageBtn');
+        const nextPageBtn = document.getElementById('nextPageBtn');
+        const pageInfo = document.getElementById('pageInfo');
+        const submitBtn = document.getElementById('submitBtn');
+        const printBtn = document.getElementById('printBtn');
+        const dictamenTextContent = document.getElementById('dictamenTextContent');
+        const summaryContent = document.getElementById('summaryContent');
+        const numeroDictamenInput = document.getElementById('numeroDictamen');
+        const modalPrintBtn = document.getElementById('modalPrintBtn');
+        
+        const formInputs = Array.from(dictamenForm.elements);
+
+        const ROWS_PER_PAGE = 50;
+        let currentPage = 1;
+        let filteredDictamenes = [...dictamenes];
+
+        const ctx = document.getElementById('dictamenChart').getContext('2d');
+        let dictamenChart;
+        let editingDictamenId = null;
+
+        const formatDate = (dateStr) => {
+            if (!dateStr) return '';
+            const [year, month, day] = dateStr.split('-');
+            return `${day}/${month}/${year}`;
+        };
+
+        const renderMedidas = (medidas, isReadOnly) => {
+            medidasList.innerHTML = '';
+            medidas.forEach((medida) => {
+                const medidaItem = document.createElement('div');
+                medidaItem.classList.add('medida-item');
+                medidaItem.innerHTML = `
+                    <div class="form-group">
+                        <label>Datos del Organismo:</label>
+                        <input type="text" class="medida-organismo" value="${medida.organismo}" ${isReadOnly ? 'readonly' : ''}>
+                    </div>
+                    <div class="form-group">
+                        <label>Datos de la Medida:</label>
+                        <input type="text" class="medida-descripcion" value="${medida.medida}" ${isReadOnly ? 'readonly' : ''}>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha de Providencia:</label>
+                        <input type="date" class="medida-providencia" value="${medida.fechaProvidencia}" ${isReadOnly ? 'readonly' : ''}>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha de Cumplimiento:</label>
+                        <input type="date" class="medida-cumplimiento" value="${medida.fechaCumplimiento}" ${isReadOnly ? 'readonly' : ''}>
+                    </div>
+                    <div class="form-group">
+                        <label>Estado:</label>
+                        <select class="medida-estado" ${isReadOnly ? 'disabled' : ''}>
+                            <option value="Pendiente" ${medida.estado === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
+                            <option value="En Trámite" ${medida.estado === 'En Trámite' ? 'selected' : ''}>En Trámite</option>
+                            <option value="Finalizada" ${medida.estado === 'Finalizada' ? 'selected' : ''}>Finalizada</option>
+                        </select>
+                    </div>
+                    ${!isReadOnly ? '<div class="medida-actions"><button type="button" class="remove-btn">Eliminar</button></div>' : ''}
+                `;
+                medidasList.appendChild(medidaItem);
+            });
+            addMedidaBtn.style.display = isReadOnly ? 'none' : 'block';
+        };
+
+        const updatePagination = () => {
+            const totalPages = Math.ceil(filteredDictamenes.length / ROWS_PER_PAGE);
+            pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
+            prevPageBtn.disabled = currentPage === 1;
+            nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
+        };
+
+        const renderTable = (data) => {
+            tableBody.innerHTML = '';
+            const start = (currentPage - 1) * ROWS_PER_PAGE;
+            const end = start + ROWS_PER_PAGE;
+            const paginatedData = data.slice(start, end);
+
+            paginatedData.forEach(d => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${d.numero}</td>
+                    <td>${formatDate(d.fecha)}</td>
+                    <td>${d.idSiged}</td>
+                    <td>${d.tematica}</td>
+                    <td>${d.juzgado}</td>
+                    <td class="action-buttons">
+                        <button class="btn btn-info view-btn" data-numero="${d.numero}">Ver</button>
+                        <button class="btn btn-warning edit-btn" data-numero="${d.numero}">Editar</button>
+                        <button class="btn btn-print print-list-btn" data-numero="${d.numero}">🖨️</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            updatePagination();
+        };
+
+        const updateTematicaFilters = () => {
+            const allTematicas = Object.keys(juzgadosPorTematica);
+            
+            const createOptions = (selectElement, tematicas) => {
+                selectElement.innerHTML = '';
+                const defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.textContent = "Todas las Temáticas";
+                selectElement.appendChild(defaultOption);
+                tematicas.forEach(tematica => {
+                    const option = document.createElement('option');
+                    option.value = tematica;
+                    option.textContent = tematica;
+                    selectElement.appendChild(option);
+                });
+            };
+            createOptions(tematicaFilter, allTematicas);
+            createOptions(dictamenTematicaSelect, allTematicas);
+        };
+        
+        const updateJuzgadosOptions = (tematica) => {
+            juzgadoIntervinienteSelect.innerHTML = '';
+            const juzgados = juzgadosPorTematica[tematica] || [];
+            if (juzgados.length > 0) {
+                 juzgados.forEach(juzgado => {
+                    const option = document.createElement('option');
+                    option.value = juzgado;
+                    option.textContent = juzgado;
+                    juzgadoIntervinienteSelect.appendChild(option);
+                });
+            } else {
+                 const defaultOption = document.createElement('option');
+                 defaultOption.value = "";
+                 defaultOption.textContent = "Seleccione una Temática";
+                 juzgadoIntervinienteSelect.appendChild(defaultOption);
+            }
+        };
+
+        const updateStats = () => {
+            const counts = dictamenes.reduce((acc, d) => {
+                acc[d.tematica] = (acc[d.tematica] || 0) + 1;
+                return acc;
+            }, {});
+            const labels = Object.keys(counts).sort();
+            const data = labels.map(label => counts[label]);
+
+            if (dictamenChart) {
+                dictamenChart.data.labels = labels;
+                dictamenChart.data.datasets[0].data = data;
+                dictamenChart.update();
+            } else {
+                dictamenChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Cantidad de Dictámenes',
+                            data: data,
+                            backgroundColor: [
+                                'rgba(59, 130, 246, 0.7)', 'rgba(30, 58, 138, 0.7)', 'rgba(107, 114, 128, 0.7)',
+                                'rgba(239, 68, 68, 0.7)', 'rgba(34, 197, 94, 0.7)'
+                            ],
+                            borderColor: [
+                                'rgba(59, 130, 246, 1)', 'rgba(30, 58, 138, 1)', 'rgba(107, 114, 128, 1)',
+                                'rgba(239, 68, 68, 1)', 'rgba(34, 197, 94, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+                });
+            }
+            statsList.innerHTML = '';
+            labels.forEach(tematica => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span>${tematica}:</span> <span>${counts[tematica]}</span>`;
+                statsList.appendChild(li);
+            });
+        };
+
+        const filterAndRender = () => {
+            const searchText = searchInput.value.toLowerCase();
+            const filterTematica = tematicaFilter.value;
+            
+            filteredDictamenes = dictamenes.filter(d => {
+                const matchesText = Object.values(d).some(value => 
+                    (typeof value === 'string' && value.toLowerCase().includes(searchText)) ||
+                    (Array.isArray(value) && value.some(m => Object.values(m).some(v => typeof v === 'string' && v.toLowerCase().includes(searchText))))
+                );
+                const matchesTematica = filterTematica === "" || d.tematica === filterTematica;
+                return matchesText && matchesTematica;
+            });
+            currentPage = 1;
+            renderTable(filteredDictamenes);
+        };
+
+        const sortBy = (key, order) => {
+            dictamenes.sort((a, b) => {
+                let aVal = a[key];
+                let bVal = b[key];
+                if (key === 'fecha') {
+                    aVal = new Date(aVal);
+                    bVal = new Date(bVal);
+                } else if (key === 'numero') {
+                    aVal = parseInt(aVal, 10);
+                    bVal = parseInt(bVal, 10);
+                }
+                if (aVal < bVal) return order === 'asc' ? -1 : 1;
+                if (aVal > bVal) return order === 'asc' ? 1 : -1;
+                return 0;
+            });
+            currentPage = 1; // Resets pagination to start
+            filterAndRender();
+        };
+        
+        const getNextDictamenNumber = () => {
+            if (dictamenes.length === 0) {
+                return 1;
+            }
+            const maxNumber = Math.max(...dictamenes.map(d => d.numero));
+            return maxNumber + 1;
+        };
+
+        const openEditModal = (dictamen) => {
+            modalTitle.textContent = dictamen ? 'Editar Dictamen' : 'Nuevo Dictamen';
+            dictamenForm.reset();
+            
+            if (dictamen) {
+                numeroDictamenInput.value = dictamen.numero;
+                document.getElementById('fechaFirma').value = dictamen.fecha;
+                document.getElementById('idSiged').value = dictamen.idSiged;
+                document.getElementById('causaReferencia').value = dictamen.causa;
+                document.getElementById('tematicaDictamen').value = dictamen.tematica;
+                updateJuzgadosOptions(dictamen.tematica);
+                document.getElementById('juzgadoInterviniente').value = dictamen.juzgado;
+                document.getElementById('textoDictamen').value = dictamen.texto;
+                renderMedidas(dictamen.medidas, false);
+                editingDictamenId = dictamen.numero;
+                numeroDictamenInput.readOnly = true;
+            } else {
+                numeroDictamenInput.value = getNextDictamenNumber();
+                numeroDictamenInput.readOnly = true;
+                document.getElementById('tematicaDictamen').value = "";
+                updateJuzgadosOptions("");
+                renderMedidas([], false);
+                editingDictamenId = null;
+            }
+            
+            formInputs.forEach(input => {
+                input.readOnly = input.id === 'numeroDictamen';
+                input.classList.toggle('read-only-input', input.readOnly);
+            });
+            
+            document.getElementById('tematicaDictamen').disabled = false;
+            submitBtn.style.display = 'block';
+            printBtn.style.display = 'block';
+            dictamenModal.style.display = 'block';
+        };
+
+        const openSummaryModal = (dictamen) => {
+            summaryContent.innerHTML = `
+                <p><strong>Nº Dictamen:</strong> ${dictamen.numero}</p>
+                <p><strong>Fecha de Firma:</strong> ${formatDate(dictamen.fecha)}</p>
+                <p><strong>ID SIGED:</strong> ${dictamen.idSiged}</p>
+                <p><strong>Causa de Referencia:</strong> ${dictamen.causa}</p>
+                <p><strong>Temática:</strong> ${dictamen.tematica}</p>
+                <p><strong>Juzgado Interviniente:</strong> ${dictamen.juzgado}</p>
+                <div class="medidas-container">
+                    <h4>Medidas Sugeridas:</h4>
+                    ${dictamen.medidas.length > 0 ? `
+                        <ul>
+                            ${dictamen.medidas.map(m => `
+                                <li>
+                                    <strong>Organismo:</strong> ${m.organismo}, 
+                                    <strong>Medida:</strong> ${m.medida}, 
+                                    <strong>Estado:</strong> ${m.estado}
+                                </li>
+                            `).join('')}
+                        </ul>
+                    ` : '<p>No hay medidas registradas.</p>'}
+                </div>
+            `;
+            dictamenTextContent.textContent = dictamen.texto;
+
+            const tabButtons = summaryModal.querySelectorAll('.tab-button');
+            const tabContents = summaryModal.querySelectorAll('.tab-content');
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            tabButtons[0].classList.add('active');
+            tabContents[0].classList.add('active');
+
+            summaryModal.style.display = 'block';
+        };
+
+        const printModalContent = (modalId) => {
+            const modal = document.getElementById(modalId);
+            const contentToPrint = modal.querySelector('.modal-content');
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write('<html><head><title>Imprimir</title>');
+            
+            const styles = document.querySelectorAll('style');
+            styles.forEach(style => {
+                printWindow.document.head.appendChild(style.cloneNode(true));
+            });
+            
+            printWindow.document.write('</head><body>');
+            printWindow.document.body.appendChild(contentToPrint.cloneNode(true));
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            
+            setTimeout(() => {
+                printWindow.focus();
+                printWindow.print();
+            }, 500);
+        };
+
+        // Event Listeners
+        searchInput.addEventListener('input', filterAndRender);
+        tematicaFilter.addEventListener('change', filterAndRender);
+        prevPageBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTable(filteredDictamenes);
+            }
+        });
+        nextPageBtn.addEventListener('click', () => {
+            const totalPages = Math.ceil(filteredDictamenes.length / ROWS_PER_PAGE);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderTable(filteredDictamenes);
+            }
+        });
+        addBtn.addEventListener('click', () => {
+            openEditModal(null);
+        });
+        closeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                dictamenModal.style.display = 'none';
+                summaryModal.style.display = 'none';
+            });
+        });
+        window.onclick = function(event) {
+            if (event.target == dictamenModal || event.target == summaryModal) {
+                dictamenModal.style.display = 'none';
+                summaryModal.style.display = 'none';
+            }
+        };
+        addMedidaBtn.addEventListener('click', () => {
+            const medidas = Array.from(document.querySelectorAll('.medida-item')).map(item => ({
+                organismo: item.querySelector('.medida-organismo').value,
+                medida: item.querySelector('.medida-descripcion').value,
+                fechaProvidencia: item.querySelector('.medida-providencia').value,
+                fechaCumplimiento: item.querySelector('.medida-cumplimiento').value,
+                estado: item.querySelector('.medida-estado').value
+            }));
+            medidas.push({ organismo: '', medida: '', fechaProvidencia: '', fechaCumplimiento: '', estado: 'Pendiente' });
+            renderMedidas(medidas, false);
+        });
+        medidasList.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-btn')) {
+                e.target.closest('.medida-item').remove();
+            }
+        });
+        printBtn.addEventListener('click', () => {
+            printModalContent('dictamenModal');
+        });
+        modalPrintBtn.addEventListener('click', () => {
+            printModalContent('summaryModal');
+        });
+        dictamenForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const medidas = Array.from(document.querySelectorAll('.medida-item')).map(item => ({
+                organismo: item.querySelector('.medida-organismo').value,
+                medida: item.querySelector('.medida-descripcion').value,
+                fechaProvidencia: item.querySelector('.medida-providencia').value,
+                fechaCumplimiento: item.querySelector('.medida-cumplimiento').value,
+                estado: item.querySelector('.medida-estado').value
+            }));
+            
+            const dictamenData = {
+                numero: parseInt(numeroDictamenInput.value),
+                fecha: document.getElementById('fechaFirma').value,
+                idSiged: document.getElementById('idSiged').value,
+                causa: document.getElementById('causaReferencia').value,
+                tematica: document.getElementById('tematicaDictamen').value,
+                juzgado: document.getElementById('juzgadoInterviniente').value,
+                texto: document.getElementById('textoDictamen').value,
+                medidas: medidas
+            };
+
+            if (editingDictamenId !== null) {
+                const index = dictamenes.findIndex(d => d.numero === editingDictamenId);
+                if (index !== -1) {
+                    dictamenes[index] = dictamenData;
+                }
+            } else {
+                dictamenes.push(dictamenData);
+            }
+            dictamenes.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+            filterAndRender();
+            updateStats();
+            dictamenModal.style.display = 'none';
+            dictamenForm.reset();
+        });
+        document.querySelectorAll('th[data-sort-by]').forEach(header => {
+            header.addEventListener('click', () => {
+                const key = header.getAttribute('data-sort-by');
+                const order = header.getAttribute('data-order');
+                const newOrder = order === 'asc' ? 'desc' : 'asc';
+                header.setAttribute('data-order', newOrder);
+                sortBy(key, newOrder);
+            });
+        });
+        tableBody.addEventListener('click', (e) => {
+            const numero = e.target.getAttribute('data-numero');
+            const dictamen = dictamenes.find(d => d.numero === parseInt(numero));
+            if (!dictamen) return;
+
+            if (e.target.classList.contains('view-btn')) {
+                openSummaryModal(dictamen);
+            } else if (e.target.classList.contains('edit-btn')) {
+                openEditModal(dictamen);
+                submitBtn.textContent = 'Guardar Cambios';
+            } else if (e.target.classList.contains('print-list-btn')) {
+                const dictamenHTML = `
+                    <h3>Dictamen Nº ${dictamen.numero}</h3>
+                    <p><strong>Fecha:</strong> ${formatDate(dictamen.fecha)}</p>
+                    <p><strong>ID SIGED:</strong> ${dictamen.idSiged}</p>
+                    <p><strong>Causa:</strong> ${dictamen.causa}</p>
+                    <p><strong>Temática:</strong> ${dictamen.tematica}</p>
+                    <p><strong>Juzgado:</strong> ${dictamen.juzgado}</p>
+                    <h4>Texto del Dictamen:</h4>
+                    <p>${dictamen.texto}</p>
+                    <h4>Medidas Sugeridas:</h4>
+                    <ul>
+                        ${dictamen.medidas.map(m => `<li><strong>Organismo:</strong> ${m.organismo}, <strong>Medida:</strong> ${m.medida}, <strong>Estado:</strong> ${m.estado}</li>`).join('')}
+                    </ul>
+                `;
+                const newWindow = window.open('', '_blank');
+                newWindow.document.write(dictamenHTML);
+                newWindow.document.close();
+                newWindow.print();
+            }
+        });
+
+        dictamenTematicaSelect.addEventListener('change', (e) => {
+            const selectedTematica = e.target.value;
+            updateJuzgadosOptions(selectedTematica);
+        });
+
+        // Tabs functionality for summary modal
+        summaryModal.addEventListener('click', (e) => {
+            if (e.target.classList.contains('tab-button')) {
+                const tabId = e.target.getAttribute('data-tab-id');
+                const tabButtons = summaryModal.querySelectorAll('.tab-button');
+                const tabContents = summaryModal.querySelectorAll('.tab-content');
+                
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                e.target.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            }
+        });
+
+        // Inicializar la aplicación
+        updateTematicaFilters();
+        sortBy('numero', 'asc');
+        updateStats();
+    });
+</script>
+
+</body>
+</html>
