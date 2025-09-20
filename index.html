@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Dictámenes</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Firebase App (el core de Firebase SDK) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <!-- Firebase Firestore -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
         :root {
@@ -30,27 +28,27 @@
             --radius-sm: 8px;
             --transition: all 0.3s ease;
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
-        
+
         body {
             background-color: #f1f5f9;
             color: var(--text-color);
             line-height: 1.6;
         }
-        
+
         .container {
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
-        
+
         header {
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
             color: white;
@@ -62,19 +60,19 @@
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
             width: 100%;
         }
-        
+
         h1 {
             font-size: 1.8rem;
             font-weight: 700;
         }
-        
+
         .stats {
             display: flex;
             gap: 15px;
@@ -83,23 +81,23 @@
             border-radius: var(--radius-sm);
             backdrop-filter: blur(10px);
         }
-        
+
         .stat-item {
             display: flex;
             flex-direction: column;
             align-items: center;
         }
-        
+
         .stat-value {
             font-size: 1.2rem;
             font-weight: 700;
         }
-        
+
         .stat-label {
             font-size: 0.8rem;
             opacity: 0.9;
         }
-        
+
         .controls-container {
             display: flex;
             flex-wrap: wrap;
@@ -110,19 +108,19 @@
             border-radius: var(--radius);
             box-shadow: var(--shadow);
         }
-        
+
         .search-container {
             flex: 1;
             display: flex;
             gap: 10px;
         }
-        
+
         .year-filter {
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
+
         .search-input {
             flex: 1;
             padding: 12px 16px;
@@ -131,13 +129,13 @@
             font-size: 16px;
             transition: var(--transition);
         }
-        
+
         .search-input:focus {
             outline: none;
             border-color: var(--primary-light);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
         }
-        
+
         select.form-input {
             padding: 12px 16px;
             border: 1px solid var(--border-color);
@@ -146,7 +144,7 @@
             background-color: var(--white);
             cursor: pointer;
         }
-        
+
         .btn {
             padding: 12px 20px;
             border: none;
@@ -158,29 +156,29 @@
             align-items: center;
             gap: 8px;
         }
-        
+
         .btn-primary {
             background-color: var(--primary-color);
             color: white;
         }
-        
+
         .btn-primary:hover {
             background-color: var(--primary-dark);
             transform: translateY(-2px);
             box-shadow: var(--shadow-hover);
         }
-        
+
         .btn-secondary {
             background-color: var(--secondary-color);
             color: white;
         }
-        
+
         .btn-secondary:hover {
             background-color: #475569;
             transform: translateY(-2px);
             box-shadow: var(--shadow-hover);
         }
-        
+
         .table-container {
             background-color: var(--white);
             border-radius: var(--radius);
@@ -188,18 +186,18 @@
             box-shadow: var(--shadow);
             margin-bottom: 20px;
         }
-        
+
         table {
             width: 100%;
             border-collapse: collapse;
         }
-        
+
         th, td {
             padding: 16px;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
         }
-        
+
         th {
             background-color: #f8fafc;
             color: var(--text-light);
@@ -210,33 +208,33 @@
             cursor: pointer;
             transition: var(--transition);
         }
-        
+
         th:hover {
             background-color: #f1f5f9;
             color: var(--primary-color);
         }
-        
+
         tr {
             transition: var(--transition);
         }
-        
+
         tr:last-child td {
             border-bottom: none;
         }
-        
+
         tr:nth-child(even) {
             background-color: var(--light-gray);
         }
-        
+
         tr:hover {
             background-color: #f1f5f9;
         }
-        
+
         .action-buttons {
             display: flex;
             gap: 8px;
         }
-        
+
         .action-btn {
             padding: 8px 12px;
             border-radius: var(--radius-sm);
@@ -249,27 +247,27 @@
             align-items: center;
             gap: 5px;
         }
-        
+
         .btn-view {
             background-color: var(--info-color);
             color: white;
         }
-        
+
         .btn-view:hover {
             background-color: #0891b2;
             transform: translateY(-2px);
         }
-        
+
         .btn-edit {
             background-color: var(--warning-color);
             color: white;
         }
-        
+
         .btn-edit:hover {
             background-color: #d97706;
             transform: translateY(-2px);
         }
-        
+
         /* Modal */
         .modal {
             display: none;
@@ -285,7 +283,7 @@
             backdrop-filter: blur(5px);
             padding: 20px;
         }
-        
+
         .modal-content {
             background-color: var(--white);
             border-radius: var(--radius);
@@ -298,7 +296,7 @@
             position: relative;
             animation: modalFadeIn 0.3s ease-out;
         }
-        
+
         @keyframes modalFadeIn {
             from {
                 opacity: 0;
@@ -309,7 +307,7 @@
                 transform: translateY(0) scale(1);
             }
         }
-        
+
         .close-btn {
             position: absolute;
             top: 20px;
@@ -327,57 +325,57 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         .close-btn:hover {
             color: var(--danger-color);
             background-color: #fef2f2;
         }
-        
+
         .modal-header {
             margin-bottom: 20px;
             padding-bottom: 15px;
             border-bottom: 1px solid var(--border-color);
         }
-        
+
         .modal-title {
             font-size: 1.5rem;
             font-weight: 600;
             color: var(--primary-color);
         }
-        
+
         .modal-body {
             margin-bottom: 20px;
         }
-        
+
         /* Formulario dividido */
         .form-container {
             display: flex;
             gap: 20px;
         }
-        
+
         .form-left {
             flex: 1;
             min-width: 300px;
         }
-        
+
         .form-right {
             flex: 1;
             min-width: 300px;
             display: flex;
             flex-direction: column;
         }
-        
+
         .form-group {
             margin-bottom: 20px;
         }
-        
+
         .form-label {
             display: block;
             margin-bottom: 8px;
             font-weight: 500;
             color: var(--text-color);
         }
-        
+
         .form-input {
             width: 100%;
             padding: 12px 16px;
@@ -386,18 +384,18 @@
             font-size: 16px;
             transition: var(--transition);
         }
-        
+
         .form-input:focus {
             outline: none;
             border-color: var(--primary-light);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
         }
-        
+
         textarea.form-input {
             min-height: 120px;
             resize: vertical;
         }
-        
+
         .content-container {
             flex: 1;
             display: flex;
@@ -406,7 +404,7 @@
             border-radius: var(--radius-sm);
             overflow: hidden;
         }
-        
+
         .content-header {
             display: flex;
             justify-content: space-between;
@@ -415,18 +413,18 @@
             background-color: #f8fafc;
             border-bottom: 1px solid var(--border-color);
         }
-        
+
         .content-tools {
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
+
         .word-count {
             font-size: 0.85rem;
             color: var(--text-light);
         }
-        
+
         .content-area {
             flex: 1;
             padding: 15px;
@@ -436,7 +434,7 @@
             font-family: 'Inter', sans-serif;
             line-height: 1.6;
         }
-        
+
         .content-pagination {
             display: flex;
             justify-content: space-between;
@@ -445,17 +443,17 @@
             background-color: #f8fafc;
             border-top: 1px solid var(--border-color);
         }
-        
+
         .page-info {
             font-size: 0.85rem;
             color: var(--text-light);
         }
-        
+
         .page-buttons {
             display: flex;
             gap: 5px;
         }
-        
+
         .page-btn {
             padding: 5px 10px;
             border: 1px solid var(--border-color);
@@ -465,25 +463,25 @@
             font-size: 0.8rem;
             transition: var(--transition);
         }
-        
+
         .page-btn:hover:not(:disabled) {
             background-color: var(--primary-color);
             color: white;
             border-color: var(--primary-color);
         }
-        
+
         .page-btn:disabled {
             cursor: not-allowed;
             opacity: 0.5;
         }
-        
+
         .form-actions {
             display: flex;
             justify-content: flex-end;
             gap: 10px;
             margin-top: 20px;
         }
-        
+
         /* Responsive */
         @media (max-width: 768px) {
             .header-content {
@@ -491,65 +489,65 @@
                 gap: 15px;
                 align-items: flex-start;
             }
-            
+
             .stats {
                 width: 100%;
                 justify-content: space-around;
             }
-            
+
             .controls-container {
                 flex-direction: column;
             }
-            
+
             .search-container {
                 flex-direction: column;
             }
-            
+
             table {
                 display: block;
                 overflow-x: auto;
             }
-            
+
             th, td {
                 padding: 12px 10px;
                 font-size: 14px;
             }
-            
+
             .btn {
                 padding: 10px 15px;
                 font-size: 14px;
             }
-            
+
             .action-buttons {
                 flex-wrap: wrap;
             }
-            
+
             .form-container {
                 flex-direction: column;
             }
-            
+
             .modal-content {
                 max-width: 95%;
             }
         }
-        
+
         .empty-state {
             text-align: center;
             padding: 60px 20px;
             color: var(--text-light);
         }
-        
+
         .empty-state i {
             font-size: 3rem;
             margin-bottom: 15px;
             color: var(--border-color);
         }
-        
+
         .empty-state p {
             font-size: 1.1rem;
             margin-bottom: 20px;
         }
-        
+
         .floating-btn {
             position: fixed;
             bottom: 30px;
@@ -568,12 +566,12 @@
             z-index: 100;
             transition: var(--transition);
         }
-        
+
         .floating-btn:hover {
             transform: translateY(-5px) rotate(5deg);
             box-shadow: 0 15px 30px rgba(37, 99, 235, 0.4);
         }
-        
+
         .text-badge {
             display: inline-block;
             padding: 6px 12px;
@@ -582,17 +580,17 @@
             font-weight: 500;
             cursor: default;
         }
-        
+
         .text-yes {
             background-color: var(--primary-color);
             color: white;
         }
-        
+
         .text-no {
             background-color: #e5e7eb;
             color: #6b7280;
         }
-        
+
         .pagination {
             display: flex;
             justify-content: center;
@@ -600,7 +598,7 @@
             gap: 10px;
             margin-top: 20px;
         }
-        
+
         .pagination-btn {
             padding: 8px 16px;
             border: 1px solid var(--border-color);
@@ -612,23 +610,23 @@
             align-items: center;
             gap: 5px;
         }
-        
+
         .pagination-btn:hover:not(:disabled) {
             background-color: var(--primary-color);
             color: white;
             border-color: var(--primary-color);
         }
-        
+
         .pagination-btn:disabled {
             cursor: not-allowed;
             opacity: 0.5;
         }
-        
+
         .pagination-info {
             color: var(--text-light);
             font-size: 0.9rem;
         }
-        
+
         .year-badge {
             display: inline-block;
             padding: 4px 8px;
@@ -652,7 +650,7 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-        
+
         .topic-badge {
             display: inline-block;
             padding: 4px 10px;
@@ -685,7 +683,7 @@
                 </div>
             </div>
         </header>
-        
+
         <div class="controls-container">
             <div class="search-container">
                 <input type="text" id="searchInput" class="search-input" placeholder="Buscar en dictámenes...">
@@ -700,7 +698,7 @@
                 <i class="fas fa-plus"></i> Nuevo Dictamen
             </button>
         </div>
-        
+
         <div class="table-container">
             <table id="recordsTable">
                 <thead>
@@ -715,8 +713,7 @@
                     </tr>
                 </thead>
                 <tbody id="recordsBody">
-                    <!-- Los registros se insertarán aquí dinámicamente -->
-                </tbody>
+                    </tbody>
             </table>
             <div id="emptyState" class="empty-state">
                 <i class="fas fa-file-contract"></i>
@@ -737,8 +734,7 @@
             </button>
         </div>
     </div>
-    
-    <!-- Modal para ver/editar dictamen -->
+
     <div id="recordModal" class="modal">
         <div class="modal-content">
             <button class="close-btn">&times;</button>
@@ -807,8 +803,7 @@
             </div>
         </div>
     </div>
-    
-    <!-- Modal para ver contenido completo -->
+
     <div id="contentModal" class="modal">
         <div class="modal-content">
             <button class="close-btn">&times;</button>
@@ -825,8 +820,7 @@
             </div>
         </div>
     </div>
-    
-    <!-- Botón flotante para ver todos los registros -->
+
     <div id="viewAllBtn" class="floating-btn" title="Ver todos los registros">
         <i class="fas fa-list"></i>
     </div>
@@ -867,7 +861,7 @@
             const textRecords = document.getElementById('textRecords');
             const noTextRecords = document.getElementById('noTextRecords');
             const saveBtn = document.getElementById('saveBtn');
-            
+
             // Elementos del modal de contenido
             const contentTextarea = document.getElementById('content');
             const wordCount = document.getElementById('wordCount');
@@ -875,7 +869,7 @@
             const pageInfoContent = document.getElementById('pageInfoContent');
             const prevPageContent = document.getElementById('prevPageContent');
             const nextPageContent = document.getElementById('nextPageContent');
-            
+
             // Variables de estado
             let records = [];
             let editingId = null;
@@ -884,29 +878,29 @@
             const recordsPerPage = 50;
             const currentYear = new Date().getFullYear();
             const startYear = 2026; // Año de inicio
-            
+
             // Variables para la paginación de contenido
             let contentPages = [];
             let currentContentPage = 1;
             const wordsPerPage = 5000;
-            
+
             // Inicializar la aplicación
             function init() {
                 loadRecords();
                 setupEventListeners();
             }
-            
+
             // Cargar registros desde Firestore
             function loadRecords() {
                 showLoading(saveBtn, true);
-                
+
                 db.collection("dictamenes").orderBy("number", "asc").get()
                 .then((querySnapshot) => {
                     records = [];
                     querySnapshot.forEach((doc) => {
                         records.push({ id: doc.id, ...doc.data() });
                     });
-                    
+
                     updateYearFilter();
                     updateStats();
                     renderTable();
@@ -918,7 +912,7 @@
                     showLoading(saveBtn, false);
                 });
             }
-            
+
             // Mostrar/ocultar indicador de carga
             function showLoading(button, isLoading) {
                 if (isLoading) {
@@ -929,7 +923,7 @@
                     button.disabled = false;
                 }
             }
-            
+
             // Configurar event listeners
             function setupEventListeners() {
                 newRecordBtn.addEventListener('click', openNewRecordModal);
@@ -941,20 +935,20 @@
                 viewAllBtn.addEventListener('click', viewAllRecords);
                 prevPageBtn.addEventListener('click', goToPrevPage);
                 nextPageBtn.addEventListener('click', goToNextPage);
-                
+
                 // Event listeners para el contenido
                 contentTextarea.addEventListener('input', updateWordCount);
                 clearContent.addEventListener('click', clearContentText);
                 prevPageContent.addEventListener('click', goToPrevContentPage);
                 nextPageContent.addEventListener('click', goToNextContentPage);
-                
+
                 closeButtons.forEach(button => {
                     button.addEventListener('click', function() {
                         recordModal.style.display = 'none';
                         contentModal.style.display = 'none';
                     });
                 });
-                
+
                 // Cerrar modal al hacer clic fuera del contenido
                 window.addEventListener('click', function(event) {
                     if (event.target === recordModal) {
@@ -965,110 +959,90 @@
                     }
                 });
             }
-            
-            // Actualizar contador de palabras
+
+            // Actualizar contador de palabras y paginación
             function updateWordCount() {
                 const text = contentTextarea.value;
                 const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
                 wordCount.textContent = `${words} palabras`;
-                
-                // Paginar el contenido
-                paginateContent(text);
+
+                // Aquí solo actualizamos el contador, la paginación se maneja en los botones
+                // La paginación real ocurre en el guardado y en la carga
             }
-            
-            // Paginar el contenido cada 5000 palabras
-            function paginateContent(text) {
-                if (text.trim() === '') {
-                    contentPages = [''];
-                    currentContentPage = 1;
-                    updateContentPagination();
-                    return;
-                }
-                
-                const words = text.trim().split(/\s+/);
-                contentPages = [];
-                
-                for (let i = 0; i < words.length; i += wordsPerPage) {
-                    contentPages.push(words.slice(i, i + wordsPerPage).join(' '));
-                }
-                
-                currentContentPage = 1;
-                updateContentPagination();
-            }
-            
+
             // Actualizar la paginación del contenido
             function updateContentPagination() {
                 const totalPages = contentPages.length;
                 pageInfoContent.textContent = `Página ${currentContentPage} de ${totalPages}`;
-                
+
                 // Mostrar el contenido de la página actual
                 contentTextarea.value = contentPages[currentContentPage - 1] || '';
-                
+
                 // Actualizar estado de los botones de paginación
                 prevPageContent.disabled = currentContentPage === 1;
                 nextPageContent.disabled = currentContentPage === totalPages || totalPages === 0;
             }
-            
+
             // Ir a la página anterior del contenido
             function goToPrevContentPage() {
                 if (currentContentPage > 1) {
                     // Guardar el contenido actual antes de cambiar de página
                     contentPages[currentContentPage - 1] = contentTextarea.value;
-                    
+
                     currentContentPage--;
                     updateContentPagination();
                 }
             }
-            
+
             // Ir a la página siguiente del contenido
             function goToNextContentPage() {
                 if (currentContentPage < contentPages.length) {
                     // Guardar el contenido actual antes de cambiar de página
                     contentPages[currentContentPage - 1] = contentTextarea.value;
-                    
+
                     currentContentPage++;
                     updateContentPagination();
                 }
             }
-            
+
             // Limpiar el contenido
             function clearContentText() {
                 if (confirm('¿Está seguro de que desea limpiar todo el contenido?')) {
                     contentTextarea.value = '';
                     updateWordCount();
+                    // Reiniciar la paginación de contenido
+                    contentPages = [''];
+                    currentContentPage = 1;
+                    updateContentPagination();
                 }
             }
-            
+
             // Obtener todo el contenido uniendo todas las páginas
             function getFullContent() {
-                // Guardar el contenido de la página actual antes de unir
-                if (contentPages.length > 0) {
-                    contentPages[currentContentPage - 1] = contentTextarea.value;
-                }
-                
-                return contentPages.join(' ');
+                // El contenido completo es simplemente lo que hay en el textarea
+                return contentTextarea.value;
             }
-            
+
             // Actualizar filtro de años
             function updateYearFilter() {
                 // Obtener años únicos de los registros
                 const years = new Set();
-                
+
                 // Añadir años desde el inicio hasta el año actual
                 for (let year = startYear; year <= currentYear; year++) {
                     years.add(year.toString());
                 }
-                
+
                 // Añadir años de los registros existentes
                 records.forEach(record => {
                     if (record.year) {
                         years.add(record.year.toString());
                     }
                 });
-                
+
                 // Ordenar años de forma descendente
                 const sortedYears = Array.from(years).sort((a, b) => b - a);
-                
+
                 // Actualizar el selector de años
                 yearFilter.innerHTML = '<option value="todos">Todos</option>';
                 sortedYears.forEach(year => {
@@ -1078,63 +1052,63 @@
                     yearFilter.appendChild(option);
                 });
             }
-            
+
             // Obtener el año de una fecha
             function getYearFromDate(dateString) {
                 return new Date(dateString).getFullYear().toString();
             }
-            
+
             // Obtener el siguiente número de dictamen para un año específico
             function getNextNumberForYear(year) {
                 const yearRecords = records.filter(record => record.year === year);
                 if (yearRecords.length === 0) return 1;
-                
+
                 const numbers = yearRecords.map(record => record.number);
                 return Math.max(...numbers) + 1;
             }
-            
+
             // Actualizar estadísticas
             function updateStats() {
                 totalRecords.textContent = records.length;
-                
+
                 const withText = records.filter(record => record.content && record.content.trim() !== '').length;
                 const withoutText = records.length - withText;
-                
+
                 textRecords.textContent = withText;
                 noTextRecords.textContent = withoutText;
             }
-            
+
             // Renderizar la tabla de registros
             function renderTable() {
                 recordsBody.innerHTML = '';
-                
+
                 if (records.length === 0) {
                     emptyState.style.display = 'block';
                     return;
                 }
-                
+
                 emptyState.style.display = 'none';
-                
+
                 const recordsToRender = filteredRecords.length > 0 ? filteredRecords : records;
                 const totalPages = Math.ceil(recordsToRender.length / recordsPerPage);
-                
+
                 // Ajustar página actual si es necesario
                 if (currentPage > totalPages) {
                     currentPage = totalPages > 0 ? totalPages : 1;
                 }
-                
+
                 updatePagination(recordsToRender.length);
-                
+
                 const startIndex = (currentPage - 1) * recordsPerPage;
                 const endIndex = startIndex + recordsPerPage;
                 const paginatedRecords = recordsToRender.slice(startIndex, endIndex);
-                
+
                 paginatedRecords.forEach(record => {
                     const row = document.createElement('tr');
-                    
+
                     // Determinar si hay texto en el contenido
                     const hasText = record.content && record.content.trim() !== '';
-                    
+
                     row.innerHTML = `
                         <td>${record.number}</td>
                         <td><span class="year-badge">${record.year}</span></td>
@@ -1157,10 +1131,10 @@
                             </div>
                         </td>
                     `;
-                    
+
                     recordsBody.appendChild(row);
                 });
-                
+
                 // Agregar event listeners a los botones de acción
                 document.querySelectorAll('.view-content').forEach(btn => {
                     btn.addEventListener('click', function() {
@@ -1168,7 +1142,7 @@
                         viewContent(id);
                     });
                 });
-                
+
                 document.querySelectorAll('.edit-record').forEach(btn => {
                     btn.addEventListener('click', function() {
                         const id = this.getAttribute('data-id');
@@ -1176,16 +1150,16 @@
                     });
                 });
             }
-            
+
             // Actualizar paginación
             function updatePagination(totalRecords) {
                 const totalPages = Math.ceil(totalRecords / recordsPerPage);
                 pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
-                
+
                 prevPageBtn.disabled = currentPage === 1;
                 nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
             }
-            
+
             // Ir a la página anterior
             function goToPrevPage() {
                 if (currentPage > 1) {
@@ -1193,54 +1167,58 @@
                     renderTable();
                 }
             }
-            
+
             // Ir a la página siguiente
             function goToNextPage() {
                 const recordsToRender = filteredRecords.length > 0 ? filteredRecords : records;
                 const totalPages = Math.ceil(recordsToRender.length / recordsPerPage);
-                
+
                 if (currentPage < totalPages) {
                     currentPage++;
                     renderTable();
                 }
             }
-            
+
             // Abrir modal para nuevo registro
             function openNewRecordModal() {
                 editingId = null;
                 document.getElementById('modalTitle').textContent = 'Nuevo Dictamen';
                 recordForm.reset();
-                
+
                 // Establecer fecha actual por defecto
                 const today = new Date();
                 document.getElementById('dictamenDate').valueAsDate = today;
-                
+
                 // Limpiar y resetear el contenido
                 contentTextarea.value = '';
                 updateWordCount();
-                
+                // Reiniciar la paginación de contenido
+                contentPages = [];
+                currentContentPage = 1;
+                updateContentPagination();
+
                 recordModal.style.display = 'flex';
             }
-            
+
             // Cerrar modal
             function closeModal() {
                 recordModal.style.display = 'none';
             }
-            
+
             // Guardar registro (nuevo o editado)
             function saveRecord(e) {
                 e.preventDefault();
-                
+
                 const subject = document.getElementById('subject').value;
                 const dictamenDate = document.getElementById('dictamenDate').value;
                 const topic = document.getElementById('topic').value;
                 const content = getFullContent(); // Obtener todo el contenido unido
-                
+
                 // Obtener el año de la fecha de dictamen
                 const year = getYearFromDate(dictamenDate);
-                
+
                 showLoading(saveBtn, true);
-                
+
                 if (editingId === null) {
                     // Nuevo registro
                     const newRecord = {
@@ -1251,7 +1229,7 @@
                         topic,
                         content
                     };
-                    
+
                     // Guardar en Firestore
                     db.collection("dictamenes").add(newRecord)
                     .then((docRef) => {
@@ -1267,17 +1245,17 @@
                 } else {
                     // Editar registro existente
                     const index = records.findIndex(record => record.id === editingId);
-                    
+
                     if (index !== -1) {
                         // Si cambió el año, necesitamos reasignar el número
                         const oldYear = records[index].year;
                         let newNumber = records[index].number;
-                        
+
                         if (year !== oldYear) {
                             // El año cambió, necesitamos un nuevo número para el nuevo año
                             newNumber = getNextNumberForYear(year);
                         }
-                        
+
                         const updatedRecord = {
                             ...records[index],
                             number: newNumber,
@@ -1287,7 +1265,7 @@
                             topic,
                             content
                         };
-                        
+
                         // Actualizar en Firestore
                         db.collection("dictamenes").doc(editingId).update(updatedRecord)
                         .then(() => {
@@ -1302,7 +1280,7 @@
                     }
                 }
             }
-            
+
             // Actualizar la UI después de guardar
             function updateUIAfterSave() {
                 updateYearFilter();
@@ -1311,25 +1289,29 @@
                 closeModal();
                 showLoading(saveBtn, false);
             }
-            
+
             // Ver contenido completo de un dictamen
             function viewContent(id) {
                 const record = records.find(record => record.id === id);
-                
+
                 if (record) {
                     document.getElementById('contentNumber').textContent = `${record.number}/${record.year}`;
                     document.getElementById('contentSubject').textContent = record.subject;
                     document.getElementById('contentDictamenDate').textContent = formatDate(record.dictamenDate);
                     document.getElementById('contentTopic').textContent = record.topic || 'Sin especificar';
-                    document.getElementById('fullContent').textContent = record.content;
+
+                    // Corrección para mostrar saltos de línea y espacios
+                    const formattedContent = record.content ? record.content.replace(/\n/g, '<br>') : '';
+                    document.getElementById('fullContent').innerHTML = formattedContent;
+
                     contentModal.style.display = 'flex';
                 }
             }
-            
+
             // Editar un registro existente
             function editRecord(id) {
                 const record = records.find(record => record.id === id);
-                
+
                 if (record) {
                     editingId = id;
                     document.getElementById('modalTitle').textContent = 'Editar Dictamen';
@@ -1337,66 +1319,73 @@
                     document.getElementById('subject').value = record.subject;
                     document.getElementById('dictamenDate').value = record.dictamenDate;
                     document.getElementById('topic').value = record.topic || '';
-                    
-                    // Cargar el contenido y paginarlo
+
+                    // Cargar el contenido directamente en el textarea
                     contentTextarea.value = record.content || '';
                     updateWordCount();
                     
+                    // Resetear la paginación de contenido
+                    contentPages = [];
+                    currentContentPage = 1;
+                    updateContentPagination();
+
                     recordModal.style.display = 'flex';
                 }
             }
-            
+
             // Filtrar registros según el texto de búsqueda y año
             function filterRecords() {
                 const searchText = searchInput.value.toLowerCase();
                 const selectedYear = yearFilter.value;
-                
+
                 if (!searchText && selectedYear === 'todos') {
                     filteredRecords = [];
                     currentPage = 1;
                     renderTable();
                     return;
                 }
-                
+
                 filteredRecords = records.filter(record => {
                     // Filtrar por año si no es "todos"
                     const yearMatch = selectedYear === 'todos' || record.year === selectedYear;
-                    
+
                     // Filtrar por texto de búsqueda
-                    const textMatch = !searchText || 
+                    const textMatch = !searchText ||
                         record.subject.toLowerCase().includes(searchText) ||
                         record.content.toLowerCase().includes(searchText) ||
                         record.topic.toLowerCase().includes(searchText) ||
                         record.number.toString().includes(searchText);
-                    
+
                     return yearMatch && textMatch;
                 });
-                
+
                 currentPage = 1;
                 renderTable();
             }
-            
+
             // Ver todos los registros en el modal de contenido
             function viewAllRecords() {
                 if (records.length === 0) {
                     alert('No hay registros para mostrar.');
                     return;
                 }
-                
+
                 // Crear contenido para mostrar todos los registros
                 let allContent = '';
-                
+
                 records.forEach(record => {
+                    // Corrección para mostrar saltos de línea y espacios
+                    const formattedContent = record.content ? record.content.replace(/\n/g, '<br>') : '';
                     allContent += `
                         <h3>Dictamen ${record.number}/${record.year}</h3>
                         <p><strong>Asunto:</strong> ${record.subject}</p>
                         <p><strong>Fecha de Dictamen:</strong> ${formatDate(record.dictamenDate)}</p>
                         <p><strong>Temática:</strong> ${record.topic || 'Sin especificar'}</p>
-                        <p><strong>Contenido:</strong> ${record.content}</p>
+                        <p><strong>Contenido:</strong> ${formattedContent}</p>
                         <hr>
                     `;
                 });
-                
+
                 document.getElementById('contentNumber').textContent = 'Todos';
                 document.getElementById('contentSubject').textContent = 'Lista completa de dictámenes';
                 document.getElementById('contentDictamenDate').textContent = '';
@@ -1404,13 +1393,13 @@
                 document.getElementById('fullContent').innerHTML = allContent;
                 contentModal.style.display = 'flex';
             }
-            
+
             // Formatear fecha para mostrar
             function formatDate(dateString) {
                 const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
                 return new Date(dateString).toLocaleDateString('es-ES', options);
             }
-            
+
             // Inicializar la aplicación
             init();
         });
