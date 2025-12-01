@@ -40,13 +40,15 @@
             background-color: #f1f5f9;
             color: var(--text-color);
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
         .container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 100%;
             margin: 0 auto;
             padding: 20px;
+            overflow-x: hidden;
         }
 
         header {
@@ -185,27 +187,33 @@
             overflow: hidden;
             box-shadow: var(--shadow);
             margin-bottom: 20px;
+            width: 100%;
+            overflow-x: hidden;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            table-layout: auto;
         }
 
         th, td {
-            padding: 16px;
+            padding: 12px 8px;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
         }
 
         th {
             background-color: #f8fafc;
             color: var(--text-light);
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            cursor: pointer;
             transition: var(--transition);
         }
 
@@ -232,20 +240,22 @@
 
         .action-buttons {
             display: flex;
-            gap: 8px;
+            gap: 6px;
+            flex-wrap: nowrap;
         }
 
         .action-btn {
-            padding: 8px 12px;
+            padding: 6px 10px;
             border-radius: var(--radius-sm);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 500;
             cursor: pointer;
             transition: var(--transition);
             border: none;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
+            white-space: nowrap;
         }
 
         .btn-view {
@@ -496,7 +506,29 @@
         }
 
         /* Responsive */
-        @media (max-width: 768px) {
+        @media (max-width: 1200px) {
+            .container {
+                padding: 15px;
+            }
+            
+            th, td {
+                padding: 10px 6px;
+                font-size: 0.85rem;
+                max-width: 150px;
+            }
+            
+            .action-btn {
+                padding: 5px 8px;
+                font-size: 0.75rem;
+            }
+            
+            .btn {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 992px) {
             .header-content {
                 flex-direction: column;
                 gap: 15px;
@@ -515,32 +547,91 @@
             .search-container {
                 flex-direction: column;
             }
+            
+            th, td {
+                padding: 8px 4px;
+                font-size: 0.8rem;
+                max-width: 120px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 4px;
+            }
+            
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
 
+        @media (max-width: 768px) {
             table {
                 display: block;
                 overflow-x: auto;
             }
-
+            
             th, td {
-                padding: 12px 10px;
-                font-size: 14px;
+                padding: 8px 4px;
+                font-size: 0.75rem;
+                white-space: normal;
+                max-width: 100px;
             }
-
-            .btn {
-                padding: 10px 15px;
-                font-size: 14px;
+            
+            .modal-content {
+                max-width: 95%;
+                padding: 15px;
             }
-
-            .action-buttons {
-                flex-wrap: wrap;
-            }
-
+            
             .form-container {
                 flex-direction: column;
             }
+            
+            .form-left, .form-right {
+                min-width: 100%;
+            }
+        }
 
-            .modal-content {
-                max-width: 95%;
+        @media (max-width: 576px) {
+            .container {
+                padding: 10px;
+            }
+            
+            header {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .stats {
+                gap: 10px;
+                padding: 8px 10px;
+            }
+            
+            .stat-value {
+                font-size: 1rem;
+            }
+            
+            .stat-label {
+                font-size: 0.7rem;
+            }
+            
+            th, td {
+                padding: 6px 3px;
+                font-size: 0.7rem;
+                max-width: 80px;
+            }
+            
+            .action-btn {
+                padding: 4px 6px;
+                font-size: 0.7rem;
+            }
+            
+            .year-badge, .topic-badge, .time-badge, .text-badge {
+                font-size: 0.65rem;
+                padding: 3px 6px;
             }
         }
 
@@ -592,6 +683,7 @@
             font-size: 0.8rem;
             font-weight: 500;
             cursor: default;
+            white-space: nowrap;
         }
 
         .text-yes {
@@ -648,6 +740,7 @@
             color: var(--primary-color);
             font-size: 0.75rem;
             font-weight: 600;
+            white-space: nowrap;
         }
 
         .loading {
@@ -672,6 +765,7 @@
             font-weight: 500;
             background-color: #e0e7ff;
             color: #3730a3;
+            white-space: nowrap;
         }
 
         .time-badge {
@@ -690,6 +784,94 @@
             font-size: 0.8rem;
             color: var(--text-light);
             margin-top: 5px;
+        }
+
+        /* Estilos para los nuevos campos */
+        .firma-options {
+            display: flex;
+            gap: 15px;
+            margin-top: 5px;
+        }
+
+        .firma-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .firma-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+        }
+
+        .firma-option label {
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .dynamic-firma-field {
+            margin-top: 10px;
+            display: none;
+        }
+
+        .dynamic-firma-field.active {
+            display: block;
+        }
+
+        .subrogante-input {
+            margin-top: 10px;
+        }
+
+        /* Expediente en negrita */
+        .expediente-bold {
+            font-weight: 700 !important;
+        }
+        
+        /* Optimización para columnas */
+        .col-numero {
+            width: 50px;
+        }
+        
+        .col-ano {
+            width: 70px;
+        }
+        
+        .col-fecha {
+            width: 120px;
+        }
+        
+        .col-tematica {
+            width: 130px;
+        }
+        
+        .col-usuario {
+            width: 140px;
+        }
+        
+        .col-firma {
+            width: 120px;
+        }
+        
+        .col-expediente {
+            width: 150px;
+        }
+        
+        .col-texto {
+            width: 80px;
+        }
+        
+        .col-registrado {
+            width: 180px;
+        }
+        
+        .col-acciones {
+            width: 140px;
+        }
+        
+        .col-asunto {
+            min-width: 200px;
+            max-width: 300px;
         }
     </style>
 </head>
@@ -717,7 +899,7 @@
 
         <div class="controls-container">
             <div class="search-container">
-                <input type="text" id="searchInput" class="search-input" placeholder="Buscar en dictámenes...">
+                <input type="text" id="searchInput" class="search-input" placeholder="Buscar en dictámenes (cualquier campo)...">
                 <div class="year-filter">
                     <label for="yearFilter" class="form-label">Año:</label>
                     <select id="yearFilter" class="form-input">
@@ -734,14 +916,17 @@
             <table id="recordsTable">
                 <thead>
                     <tr>
-                        <th>N°</th>
-                        <th>Año</th>
-                        <th>Asunto</th>
-                        <th>Fecha de Dictamen</th>
-                        <th>Temática</th>
-                        <th>Texto</th>
-                        <th>Registrado</th>
-                        <th>Acciones</th>
+                        <th class="col-numero">N°</th>
+                        <th class="col-ano">Año</th>
+                        <th class="col-asunto">Asunto</th>
+                        <th class="col-fecha">Fecha de Dictamen</th>
+                        <th class="col-tematica">Temática</th>
+                        <th class="col-usuario">Usuario Asignado</th>
+                        <th class="col-firma">Firma Defensor</th>
+                        <th class="col-expediente">Expediente</th>
+                        <th class="col-texto">Texto</th>
+                        <th class="col-registrado">Registrado</th>
+                        <th class="col-acciones">Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="recordsBody">
@@ -803,6 +988,44 @@
                                     <option value="Violencia Familiar">Violencia Familiar</option>
                                 </select>
                             </div>
+                            <div class="form-group">
+                                <label for="assignedUser" class="form-label">Usuario asignado</label>
+                                <select id="assignedUser" class="form-input">
+                                    <option value="">Seleccione un usuario</option>
+                                    <option value="Bazante Nadia Romina">Bazante Nadia Romina</option>
+                                    <option value="Cardozo Maria Raquel">Cardozo Maria Raquel</option>
+                                    <option value="Cedron Noelia Aurora">Cedron Noelia Aurora</option>
+                                    <option value="Corrales Alicia Mariela">Corrales Alicia Mariela</option>
+                                    <option value="Escobar Monica Graciela">Escobar Monica Graciela</option>
+                                    <option value="Fioravante Romulo">Fioravante Romulo</option>
+                                    <option value="Gonzalez Alberto Misael">Gonzalez Alberto Misael</option>
+                                    <option value="Gonzalez Juan Jose">Gonzalez Juan Jose</option>
+                                    <option value="Gudiño Natalia Esther">Gudiño Natalia Esther</option>
+                                    <option value="Magnani Enzo Luciano">Magnani Enzo Luciano</option>
+                                    <option value="Pablos Patricia">Pablos Patricia</option>
+                                    <option value="Palacios Ana Gabriela">Palacios Ana Gabriela</option>
+                                    <option value="Ramos Marcelo Gustavo">Ramos Marcelo Gustavo</option>
+                                    <option value="Riveros Patricia Soledad">Riveros Patricia Soledad</option>
+                                    <option value="Sosa Rita Cecilia">Sosa Rita Cecilia</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Firma Defensor Titular</label>
+                                <div class="firma-options">
+                                    <div class="firma-option">
+                                        <input type="radio" id="firmaDefensorSi" name="firmaDefensor" value="Sí" checked>
+                                        <label for="firmaDefensorSi">Sí</label>
+                                    </div>
+                                    <div class="firma-option">
+                                        <input type="radio" id="firmaDefensorNo" name="firmaDefensor" value="No">
+                                        <label for="firmaDefensorNo">No</label>
+                                    </div>
+                                </div>
+                                <div class="dynamic-firma-field" id="subroganteField">
+                                    <label class="form-label">Firma Defensor Subrogante</label>
+                                    <input type="text" id="firmaDefensorSubrogante" class="form-input subrogante-input" placeholder="Nombre del defensor subrogante">
+                                </div>
+                            </div>
                             <div class="form-group" id="createdAtContainer" style="display: none;">
                                 <label class="form-label">Registrado el</label>
                                 <div class="form-input" style="background-color: #f8fafc;" id="createdAtDisplay"></div>
@@ -834,6 +1057,10 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <label for="expediente" class="form-label">Expediente</label>
+                                <input type="text" id="expediente" class="form-input" placeholder="Número o referencia del expediente (texto libre)">
+                            </div>
                         </div>
                     </div>
                     <div class="form-actions">
@@ -853,6 +1080,10 @@
                 <p><strong>Asunto:</strong> <span id="contentSubject"></span></p>
                 <p><strong>Fecha de Dictamen:</strong> <span id="contentDictamenDate"></span></p>
                 <p><strong>Temática:</strong> <span id="contentTopic"></span></p>
+                <p><strong>Usuario asignado:</strong> <span id="contentAssignedUser"></span></p>
+                <p><strong>Firma Defensor Titular:</strong> <span id="contentFirmaDefensor"></span></p>
+                <p id="contentSubroganteLine" style="display: none;"><strong>Firma Defensor Subrogante:</strong> <span id="contentFirmaDefensorSubrogante"></span></p>
+                <p><strong>Expediente:</strong> <span id="contentExpediente"></span></p>
                 <p><strong>Registrado el:</strong> <span id="contentCreatedAt" class="time-badge"></span></p>
             </div>
             <div class="modal-body">
@@ -884,8 +1115,6 @@
 
         // Función para obtener la fecha y hora actual en Argentina (UTC-3) como Timestamp
         function getCurrentTimestampArgentina() {
-            // Usamos Timestamp de Firestore que siempre está en UTC
-            // Pero necesitamos guardar también la zona horaria para mostrar correctamente
             return firebase.firestore.Timestamp.now();
         }
 
@@ -895,27 +1124,18 @@
             
             let date;
             
-            // Si es un Timestamp de Firestore
             if (dateInput.toDate && typeof dateInput.toDate === 'function') {
                 date = dateInput.toDate();
-            } 
-            // Si es un objeto Date
-            else if (dateInput instanceof Date) {
+            } else if (dateInput instanceof Date) {
                 date = dateInput;
-            } 
-            // Si es un string ISO
-            else if (typeof dateInput === 'string') {
+            } else if (typeof dateInput === 'string') {
                 date = new Date(dateInput);
-            } 
-            // Si es un número (timestamp)
-            else if (typeof dateInput === 'number') {
+            } else if (typeof dateInput === 'number') {
                 date = new Date(dateInput);
             } else {
                 return 'No disponible';
             }
             
-            // FORZAR zona horaria de Argentina (UTC-3) SIEMPRE
-            // Opción 1: Usar toLocaleString con timeZone fija
             const argentinaTime = date.toLocaleString('es-AR', {
                 timeZone: 'America/Argentina/Buenos_Aires',
                 day: '2-digit',
@@ -995,7 +1215,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Elementos del DOM
+            // Elementos del DOM principales
             const recordsBody = document.getElementById('recordsBody');
             const emptyState = document.getElementById('emptyState');
             const recordModal = document.getElementById('recordModal');
@@ -1027,6 +1247,14 @@
             const prevPageContent = document.getElementById('prevPageContent');
             const nextPageContent = document.getElementById('nextPageContent');
 
+            // Elementos de los campos
+            const assignedUserSelect = document.getElementById('assignedUser');
+            const firmaDefensorSi = document.getElementById('firmaDefensorSi');
+            const firmaDefensorNo = document.getElementById('firmaDefensorNo');
+            const subroganteField = document.getElementById('subroganteField');
+            const firmaDefensorSubroganteInput = document.getElementById('firmaDefensorSubrogante');
+            const expedienteInput = document.getElementById('expediente');
+
             // Variables de estado
             let records = [];
             let editingId = null;
@@ -1034,7 +1262,7 @@
             let currentPage = 1;
             const recordsPerPage = 50;
             const currentYear = new Date().getFullYear();
-            const startYear = 2026; // Año de inicio
+            const startYear = 2026;
 
             // Variables para la paginación de contenido
             let contentPages = [];
@@ -1056,11 +1284,9 @@
                     records = [];
                     querySnapshot.forEach((doc) => {
                         const data = doc.data();
-                        // Asegurarse de que createdAt sea un Timestamp
                         records.push({ 
                             id: doc.id, 
                             ...data,
-                            // Si createdAt es un string, convertirlo a Date para procesamiento
                             createdAt: data.createdAt || null
                         });
                     });
@@ -1105,6 +1331,20 @@
                 clearContent.addEventListener('click', clearContentText);
                 prevPageContent.addEventListener('click', goToPrevContentPage);
                 nextPageContent.addEventListener('click', goToNextContentPage);
+
+                // Event listeners para los campos
+                firmaDefensorNo.addEventListener('change', function() {
+                    if (this.checked) {
+                        subroganteField.classList.add('active');
+                    }
+                });
+
+                firmaDefensorSi.addEventListener('change', function() {
+                    if (this.checked) {
+                        subroganteField.classList.remove('active');
+                        firmaDefensorSubroganteInput.value = '';
+                    }
+                });
 
                 // Máscara para fecha DD/MM/AAAA
                 dictamenDateInput.addEventListener('input', function(e) {
@@ -1254,7 +1494,7 @@
                 noTextRecords.textContent = withoutText;
             }
 
-            // Renderizar la tabla de registros - AHORA SIEMPRE MUESTRA HORA ARGENTINA
+            // Renderizar la tabla de registros
             function renderTable() {
                 recordsBody.innerHTML = '';
 
@@ -1283,11 +1523,15 @@
 
                     const hasText = record.content && record.content.trim() !== '';
                     
-                    // OBTENER FECHA/HORA DE REGISTRO EN ARGENTINA SIEMPRE
                     let registroDisplay = 'No disponible';
                     if (record.createdAt) {
-                        // Usar la función que SIEMPRE devuelve hora Argentina
                         registroDisplay = formatDateTimeArgentina(record.createdAt);
+                    }
+
+                    // Obtener el texto para firma defensor
+                    let firmaDefensorDisplay = record.firmaDefensor || 'No';
+                    if (record.firmaDefensor === 'No' && record.firmaDefensorSubrogante) {
+                        firmaDefensorDisplay = 'Subrogante';
                     }
 
                     row.innerHTML = `
@@ -1296,6 +1540,9 @@
                         <td>${record.subject}</td>
                         <td>${formatDateForDisplay(record.dictamenDate)}</td>
                         <td><span class="topic-badge">${record.topic || 'Sin especificar'}</span></td>
+                        <td>${record.assignedUser || 'No asignado'}</td>
+                        <td>${firmaDefensorDisplay}</td>
+                        <td><span class="expediente-bold">${record.expediente || 'No especificado'}</span></td>
                         <td>
                             <span class="text-badge ${hasText ? 'text-yes' : 'text-no'}">
                                 ${hasText ? 'Sí' : 'No'}
@@ -1375,6 +1622,14 @@
                 dictamenDateInput.value = `${day}/${month}/${year}`;
                 dictamenDateInput.style.borderColor = 'var(--success-color)';
 
+                // Resetear los campos
+                assignedUserSelect.value = '';
+                firmaDefensorSi.checked = true;
+                firmaDefensorNo.checked = false;
+                subroganteField.classList.remove('active');
+                firmaDefensorSubroganteInput.value = '';
+                expedienteInput.value = '';
+
                 createdAtContainer.style.display = 'none';
 
                 contentTextarea.value = '';
@@ -1391,13 +1646,17 @@
                 recordModal.style.display = 'none';
             }
 
-            // Guardar registro (nuevo o editado) - SIEMPRE CON TIMESTAMP UTC
+            // Guardar registro (nuevo o editado)
             function saveRecord(e) {
                 e.preventDefault();
 
                 const subject = document.getElementById('subject').value;
                 const dictamenDate = dictamenDateInput.value;
                 const topic = document.getElementById('topic').value;
+                const assignedUser = assignedUserSelect.value;
+                const firmaDefensor = document.querySelector('input[name="firmaDefensor"]:checked').value;
+                const firmaDefensorSubrogante = firmaDefensorSubroganteInput.value;
+                const expediente = expedienteInput.value;
                 const content = getFullContent();
 
                 if (!isValidDate(dictamenDate)) {
@@ -1411,7 +1670,7 @@
                 showLoading(saveBtn, true);
 
                 if (editingId === null) {
-                    // NUEVO REGISTRO: Usar Timestamp de Firestore (UTC)
+                    // NUEVO REGISTRO
                     const createdAt = getCurrentTimestampArgentina();
                     
                     const newRecord = {
@@ -1420,8 +1679,12 @@
                         subject,
                         dictamenDate: formatDateForStorage(dictamenDate),
                         topic,
+                        assignedUser,
+                        firmaDefensor,
+                        firmaDefensorSubrogante: firmaDefensor === 'No' ? firmaDefensorSubrogante : '',
+                        expediente,
                         content,
-                        createdAt: createdAt // Timestamp en UTC
+                        createdAt: createdAt
                     };
 
                     db.collection("dictamenes").add(newRecord)
@@ -1454,6 +1717,10 @@
                             subject,
                             dictamenDate: formatDateForStorage(dictamenDate),
                             topic,
+                            assignedUser,
+                            firmaDefensor,
+                            firmaDefensorSubrogante: firmaDefensor === 'No' ? firmaDefensorSubrogante : '',
+                            expediente,
                             content
                         };
 
@@ -1481,7 +1748,7 @@
                 showLoading(saveBtn, false);
             }
 
-            // Ver contenido completo de un dictamen - CON HORA ARGENTINA SIEMPRE
+            // Ver contenido completo de un dictamen
             function viewContent(id) {
                 const record = records.find(record => record.id === id);
 
@@ -1490,8 +1757,20 @@
                     document.getElementById('contentSubject').textContent = record.subject;
                     document.getElementById('contentDictamenDate').textContent = formatDateForDisplay(record.dictamenDate);
                     document.getElementById('contentTopic').textContent = record.topic || 'Sin especificar';
+                    document.getElementById('contentAssignedUser').textContent = record.assignedUser || 'No asignado';
+                    document.getElementById('contentFirmaDefensor').textContent = record.firmaDefensor || 'No';
                     
-                    // MOSTRAR HORA DE REGISTRO EN ARGENTINA SIEMPRE
+                    // Mostrar u ocultar línea de subrogante
+                    const subroganteLine = document.getElementById('contentSubroganteLine');
+                    if (record.firmaDefensor === 'No' && record.firmaDefensorSubrogante) {
+                        subroganteLine.style.display = 'block';
+                        document.getElementById('contentFirmaDefensorSubrogante').textContent = record.firmaDefensorSubrogante;
+                    } else {
+                        subroganteLine.style.display = 'none';
+                    }
+                    
+                    document.getElementById('contentExpediente').textContent = record.expediente || 'No especificado';
+                    
                     let registroDisplay = 'No disponible';
                     if (record.createdAt) {
                         registroDisplay = formatDateTimeArgentina(record.createdAt);
@@ -1519,10 +1798,23 @@
                     dictamenDateInput.style.borderColor = 'var(--success-color)';
                     
                     document.getElementById('topic').value = record.topic || '';
+                    assignedUserSelect.value = record.assignedUser || '';
+                    
+                    // Configurar firma defensor
+                    if (record.firmaDefensor === 'No') {
+                        firmaDefensorNo.checked = true;
+                        subroganteField.classList.add('active');
+                        firmaDefensorSubroganteInput.value = record.firmaDefensorSubrogante || '';
+                    } else {
+                        firmaDefensorSi.checked = true;
+                        subroganteField.classList.remove('active');
+                    }
+                    
+                    // Configurar expediente
+                    expedienteInput.value = record.expediente || '';
 
                     if (record.createdAt) {
                         createdAtContainer.style.display = 'block';
-                        // Mostrar hora de registro en Argentina siempre
                         createdAtDisplay.textContent = formatDateTimeArgentina(record.createdAt);
                     } else {
                         createdAtContainer.style.display = 'none';
@@ -1539,7 +1831,7 @@
                 }
             }
 
-            // Filtrar registros
+            // Filtrar registros - AHORA BUSCA EN TODOS LOS CAMPOS INCLUYENDO NÚMERO
             function filterRecords() {
                 const searchText = searchInput.value.toLowerCase();
                 const selectedYear = yearFilter.value;
@@ -1554,11 +1846,28 @@
                 filteredRecords = records.filter(record => {
                     const yearMatch = selectedYear === 'todos' || record.year === selectedYear;
 
-                    const textMatch = !searchText ||
-                        record.subject.toLowerCase().includes(searchText) ||
-                        (record.content && record.content.toLowerCase().includes(searchText)) ||
-                        (record.topic && record.topic.toLowerCase().includes(searchText)) ||
-                        record.number.toString().includes(searchText);
+                    if (!searchText) {
+                        return yearMatch;
+                    }
+
+                    // Buscar en todos los campos convertidos a string
+                    const searchFields = [
+                        record.subject || '',
+                        record.topic || '',
+                        record.assignedUser || '',
+                        record.expediente || '',
+                        record.content || '',
+                        record.firmaDefensor || '',
+                        record.firmaDefensorSubrogante || '',
+                        record.number.toString(),
+                        record.year.toString(),
+                        formatDateForDisplay(record.dictamenDate) || ''
+                    ];
+
+                    // Convertir a string y buscar
+                    const textMatch = searchFields.some(field => 
+                        field.toString().toLowerCase().includes(searchText)
+                    );
 
                     return yearMatch && textMatch;
                 });
@@ -1567,7 +1876,7 @@
                 renderTable();
             }
 
-            // Ver todos los registros en el modal de contenido - CON HORA ARGENTINA
+            // Ver todos los registros en el modal de contenido
             function viewAllRecords() {
                 if (records.length === 0) {
                     alert('No hay registros para mostrar.');
@@ -1579,10 +1888,15 @@
                 records.forEach(record => {
                     const formattedContent = record.content ? record.content.replace(/\n/g, '<br>') : '';
                     
-                    // Obtener hora de registro en Argentina siempre
                     let registroDisplay = 'No disponible';
                     if (record.createdAt) {
                         registroDisplay = formatDateTimeArgentina(record.createdAt);
+                    }
+                    
+                    // Obtener texto para firma defensor
+                    let firmaDefensorText = record.firmaDefensor || 'No';
+                    if (record.firmaDefensor === 'No' && record.firmaDefensorSubrogante) {
+                        firmaDefensorText = `No (Subrogante: ${record.firmaDefensorSubrogante})`;
                     }
                     
                     allContent += `
@@ -1590,6 +1904,9 @@
                         <p><strong>Asunto:</strong> ${record.subject}</p>
                         <p><strong>Fecha de Dictamen:</strong> ${formatDateForDisplay(record.dictamenDate)}</p>
                         <p><strong>Temática:</strong> ${record.topic || 'Sin especificar'}</p>
+                        <p><strong>Usuario asignado:</strong> ${record.assignedUser || 'No asignado'}</p>
+                        <p><strong>Firma Defensor Titular:</strong> ${firmaDefensorText}</p>
+                        <p><strong>Expediente:</strong> ${record.expediente || 'No especificado'}</p>
                         <p><strong>Registrado el:</strong> ${registroDisplay}</p>
                         <p><strong>Contenido:</strong> ${formattedContent}</p>
                         <hr>
@@ -1600,6 +1917,9 @@
                 document.getElementById('contentSubject').textContent = 'Lista completa de dictámenes';
                 document.getElementById('contentDictamenDate').textContent = '';
                 document.getElementById('contentTopic').textContent = '';
+                document.getElementById('contentAssignedUser').textContent = '';
+                document.getElementById('contentFirmaDefensor').textContent = '';
+                document.getElementById('contentExpediente').textContent = '';
                 document.getElementById('contentCreatedAt').textContent = '';
                 document.getElementById('fullContent').innerHTML = allContent;
                 contentModal.style.display = 'flex';
