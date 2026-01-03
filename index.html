@@ -1246,8 +1246,7 @@
                 <p><strong>Temática:</strong> <span id="contentTopic"></span></p>
                 <p><strong>Usuario asignado:</strong> <span id="contentAssignedUser"></span></p>
                 <div id="firmaContainer">
-                    <!-- Aquí se mostrará solo la firma seleccionada -->
-                </div>
+                    </div>
                 <p><strong>Expediente:</strong> <span id="contentExpediente"></span></p>
                 <p><strong>Registrado el:</strong> <span id="contentCreatedAt" class="time-badge"></span></p>
             </div>
@@ -1523,6 +1522,15 @@
                             });
                         });
                         
+                        // ORDENAMIENTO DESCENDENTE POR NÚMERO (Y AÑO)
+                        // Primero ordena por año descendente, luego por número descendente
+                        records.sort((a, b) => {
+                            if (Number(a.year) !== Number(b.year)) {
+                                return Number(b.year) - Number(a.year);
+                            }
+                            return Number(b.number) - Number(a.number);
+                        });
+                        
                         updateYearFilter();
                         updateStats();
                         renderTable();
@@ -1543,6 +1551,15 @@
                     const storedRecords = localStorage.getItem('dictamenes');
                     if (storedRecords) {
                         records = JSON.parse(storedRecords);
+                        
+                        // ORDENAMIENTO DESCENDENTE POR NÚMERO (Y AÑO)
+                        records.sort((a, b) => {
+                            if (Number(a.year) !== Number(b.year)) {
+                                return Number(b.year) - Number(a.year);
+                            }
+                            return Number(b.number) - Number(a.number);
+                        });
+
                         updateYearFilter();
                         updateStats();
                         renderTable();
