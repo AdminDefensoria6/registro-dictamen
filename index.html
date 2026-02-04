@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Dictámenes</title>
+    <title>Dictámenes</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -76,34 +76,76 @@
         }
 
         .stats {
-            display: flex;
-            gap: 10px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
             background: rgba(255, 255, 255, 0.15);
-            padding: 8px 10px;
+            padding: 10px;
             border-radius: var(--radius-sm);
             backdrop-filter: blur(10px);
-            justify-content: space-around;
-            flex-wrap: nowrap;
-            overflow-x: auto;
         }
 
         .stat-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-width: 70px;
-            flex-shrink: 0;
+            justify-content: center;
+            padding: 6px 0;
         }
 
         .stat-value {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: 700;
+            line-height: 1.2;
         }
 
         .stat-label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             opacity: 0.9;
             text-align: center;
+            margin-top: 2px;
+            line-height: 1.1;
+        }
+
+        .monthly-stats {
+            display: none; /* Oculto por defecto, se mostrará si hay datos */
+            overflow-x: auto;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-sm);
+        }
+
+        .monthly-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 5px;
+            min-width: 800px;
+        }
+
+        .month-stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 2px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            min-width: 50px;
+        }
+
+        .month-stat-value {
+            font-size: 0.9rem;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        .month-stat-label {
+            font-size: 0.6rem;
+            opacity: 0.9;
+            text-align: center;
+            margin-top: 1px;
+            line-height: 1;
         }
 
         .controls-container {
@@ -124,7 +166,20 @@
             width: 100%;
         }
 
-        .year-filter {
+        .filter-row {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            .filter-row {
+                flex-direction: row;
+            }
+        }
+
+        .year-filter, .month-filter {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -553,20 +608,41 @@
             }
             
             .stats {
-                gap: 12px;
-                padding: 10px 12px;
+                gap: 10px;
+                padding: 12px;
             }
             
             .stat-item {
-                min-width: 80px;
+                padding: 8px 0;
             }
             
             .stat-value {
-                font-size: 1.2rem;
+                font-size: 1.3rem;
             }
             
             .stat-label {
-                font-size: 0.8rem;
+                font-size: 0.75rem;
+            }
+            
+            .monthly-stats {
+                padding: 12px;
+            }
+            
+            .monthly-stats-grid {
+                gap: 8px;
+            }
+            
+            .month-stat-item {
+                padding: 5px 3px;
+                min-width: 55px;
+            }
+            
+            .month-stat-value {
+                font-size: 0.95rem;
+            }
+            
+            .month-stat-label {
+                font-size: 0.65rem;
             }
             
             .btn {
@@ -579,9 +655,9 @@
                 align-items: center;
             }
             
-            .year-filter {
+            .year-filter, .month-filter {
                 width: auto;
-                min-width: 150px;
+                min-width: 120px;
             }
             
             .form-actions {
@@ -624,8 +700,16 @@
                 flex: 1;
             }
             
-            .year-filter {
-                width: 180px;
+            .year-filter, .month-filter {
+                width: 140px;
+            }
+            
+            .monthly-stats {
+                display: block;
+            }
+            
+            .monthly-stats-grid {
+                min-width: 1000px;
             }
             
             .form-container {
@@ -655,10 +739,6 @@
                 flex-direction: row;
             }
             
-            .stats {
-                width: auto;
-            }
-            
             table {
                 min-width: 100%;
             }
@@ -676,6 +756,10 @@
             .action-btn {
                 padding: 6px 12px;
                 font-size: 0.85rem;
+            }
+            
+            .monthly-stats-grid {
+                min-width: 1200px;
             }
         }
 
@@ -1001,6 +1085,25 @@
         
         /* Mejoras para móviles */
         @media (max-width: 479px) {
+            .stats {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 6px;
+                padding: 8px;
+            }
+            
+            .stat-item:nth-child(1) {
+                grid-column: 1 / span 3;
+                margin-bottom: 5px;
+            }
+            
+            .stat-value {
+                font-size: 1.1rem;
+            }
+            
+            .stat-label {
+                font-size: 0.65rem;
+            }
+            
             .pagination-btn {
                 min-width: 100px;
                 padding: 6px 12px;
@@ -1027,6 +1130,16 @@
             
             input, select, textarea {
                 font-size: 16px !important;
+            }
+        }
+        
+        @media (max-width: 320px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stat-item:nth-child(1) {
+                grid-column: 1 / span 2;
             }
         }
         
@@ -1062,6 +1175,24 @@
             background: #c1c1c1;
             border-radius: 10px;
         }
+        
+        .monthly-stats::-webkit-scrollbar {
+            height: 4px;
+        }
+        
+        .monthly-stats::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        
+        .monthly-stats::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+        
+        .monthly-stats::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
     </style>
 </head>
 <body>
@@ -1072,19 +1203,34 @@
     <div class="container">
         <header>
             <div class="header-content">
-                <h1>Registro de Dictámenes</h1>
+                <h1>Dictámenes</h1>
                 <div class="stats">
                     <div class="stat-item">
                         <span class="stat-value" id="totalRecords">0</span>
                         <span class="stat-label">Total</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-value" id="textRecords">0</span>
-                        <span class="stat-label">Con Texto</span>
+                        <span class="stat-value" id="trimestre1">0</span>
+                        <span class="stat-label">Ene-Mar</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-value" id="noTextRecords">0</span>
-                        <span class="stat-label">Sin Texto</span>
+                        <span class="stat-value" id="trimestre2">0</span>
+                        <span class="stat-label">Abr-Jun</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="trimestre3">0</span>
+                        <span class="stat-label">Jul-Sep</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="trimestre4">0</span>
+                        <span class="stat-label">Oct-Dic</span>
+                    </div>
+                </div>
+                
+                <!-- Estadísticas mensuales -->
+                <div class="monthly-stats" id="monthlyStats">
+                    <div class="monthly-stats-grid" id="monthlyStatsGrid">
+                        <!-- Se llenará dinámicamente con JavaScript -->
                     </div>
                 </div>
             </div>
@@ -1093,11 +1239,31 @@
         <div class="controls-container">
             <div class="search-container">
                 <input type="text" id="searchInput" class="search-input" placeholder="Buscar por número, asunto, expediente o cualquier campo...">
-                <div class="year-filter">
-                    <label for="yearFilter" class="form-label">Año:</label>
-                    <select id="yearFilter" class="form-input">
-                        <option value="todos">Todos</option>
-                    </select>
+                <div class="filter-row">
+                    <div class="year-filter">
+                        <label for="yearFilter" class="form-label">Año:</label>
+                        <select id="yearFilter" class="form-input">
+                            <option value="todos">Todos</option>
+                        </select>
+                    </div>
+                    <div class="month-filter">
+                        <label for="monthFilter" class="form-label">Mes:</label>
+                        <select id="monthFilter" class="form-input">
+                            <option value="todos">Todos</option>
+                            <option value="1">Enero</option>
+                            <option value="2">Febrero</option>
+                            <option value="3">Marzo</option>
+                            <option value="4">Abril</option>
+                            <option value="5">Mayo</option>
+                            <option value="6">Junio</option>
+                            <option value="7">Julio</option>
+                            <option value="8">Agosto</option>
+                            <option value="9">Septiembre</option>
+                            <option value="10">Octubre</option>
+                            <option value="11">Noviembre</option>
+                            <option value="12">Diciembre</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             <button id="newRecordBtn" class="btn btn-primary">
@@ -1444,6 +1610,29 @@
             return new Date().getFullYear().toString();
         }
 
+        // Función para obtener el mes de una fecha DD/MM/AAAA o YYYY-MM-DD
+        function getMonthFromDate(dateString) {
+            if (!dateString) return 0;
+            
+            let month = 0;
+            
+            if (dateString.includes('/')) {
+                // Formato DD/MM/AAAA
+                const parts = dateString.split('/');
+                if (parts.length === 3) {
+                    month = parseInt(parts[1], 10);
+                }
+            } else if (dateString.includes('-')) {
+                // Formato YYYY-MM-DD
+                const parts = dateString.split('-');
+                if (parts.length === 3) {
+                    month = parseInt(parts[1], 10);
+                }
+            }
+            
+            return month;
+        }
+
         // Función para mostrar notificaciones
         function showNotification(message, type = "info") {
             const notification = document.createElement("div");
@@ -1469,6 +1658,7 @@
             const recordForm = document.getElementById('recordForm');
             const searchInput = document.getElementById('searchInput');
             const yearFilter = document.getElementById('yearFilter');
+            const monthFilter = document.getElementById('monthFilter');
             const newRecordBtn = document.getElementById('newRecordBtn');
             const emptyStateBtn = document.getElementById('emptyStateBtn');
             const cancelBtn = document.getElementById('cancelBtn');
@@ -1478,12 +1668,18 @@
             const nextPageBtn = document.getElementById('nextPageBtn');
             const pageInfo = document.getElementById('pageInfo');
             const totalRecords = document.getElementById('totalRecords');
-            const textRecords = document.getElementById('textRecords');
-            const noTextRecords = document.getElementById('noTextRecords');
             const saveBtn = document.getElementById('saveBtn');
             const saveBtnText = document.getElementById('saveBtnText');
             const saveBtnSpinner = document.getElementById('saveBtnSpinner');
             const loadingOverlay = document.getElementById('loadingOverlay');
+            const monthlyStats = document.getElementById('monthlyStats');
+            const monthlyStatsGrid = document.getElementById('monthlyStatsGrid');
+            
+            // Elementos para KPIs de trimestre
+            const trimestre1 = document.getElementById('trimestre1');
+            const trimestre2 = document.getElementById('trimestre2');
+            const trimestre3 = document.getElementById('trimestre3');
+            const trimestre4 = document.getElementById('trimestre4');
             
             // Elementos del formulario
             const dictamenDateInput = document.getElementById('dictamenDate');
@@ -1512,12 +1708,15 @@
             let currentPage = 1;
             const recordsPerPage = 10;
             const currentYear = new Date().getFullYear();
-            const startYear = 2020;
+            const startYear = 2026;
             
             // Variables para paginación de contenido
             let contentPages = [];
             let currentContentPage = 1;
             const wordsPerPage = 5000;
+            
+            // Nombres de meses para mostrar
+            const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
             
             // Inicializar la aplicación
             function init() {
@@ -1567,6 +1766,8 @@
                         
                         updateYearFilter();
                         updateStats();
+                        updateTrimestreStats();
+                        updateMonthlyStats();
                         renderTable();
                         
                         loadingOverlay.style.display = 'none';
@@ -1596,6 +1797,8 @@
 
                         updateYearFilter();
                         updateStats();
+                        updateTrimestreStats();
+                        updateMonthlyStats();
                         renderTable();
                     } else {
                         emptyState.style.display = 'block';
@@ -1624,6 +1827,7 @@
                 recordForm.addEventListener('submit', saveRecord);
                 searchInput.addEventListener('input', filterRecords);
                 yearFilter.addEventListener('change', filterRecords);
+                monthFilter.addEventListener('change', filterRecords);
                 viewAllBtn.addEventListener('click', viewAllRecords);
                 prevPageBtn.addEventListener('click', goToPrevPage);
                 nextPageBtn.addEventListener('click', goToNextPage);
@@ -1826,15 +2030,86 @@
                 }
             }
             
-            // Actualizar estadísticas
+            // Actualizar estadísticas principales
             function updateStats() {
                 totalRecords.textContent = records.length;
+            }
+            
+            // Actualizar estadísticas por trimestre
+            function updateTrimestreStats() {
+                let trim1 = 0, trim2 = 0, trim3 = 0, trim4 = 0;
                 
-                const withText = records.filter(record => record.content && record.content.trim() !== '').length;
-                const withoutText = records.length - withText;
+                // Obtener el año seleccionado en el filtro
+                const selectedYear = yearFilter.value;
                 
-                textRecords.textContent = withText;
-                noTextRecords.textContent = withoutText;
+                // Filtrar registros por año si no es "todos"
+                let recordsToCheck = records;
+                if (selectedYear !== 'todos') {
+                    recordsToCheck = records.filter(record => record.year.toString() === selectedYear);
+                }
+                
+                // Contar por trimestre
+                recordsToCheck.forEach(record => {
+                    const month = getMonthFromDate(record.dictamenDate);
+                    
+                    if (month >= 1 && month <= 3) {
+                        trim1++;
+                    } else if (month >= 4 && month <= 6) {
+                        trim2++;
+                    } else if (month >= 7 && month <= 9) {
+                        trim3++;
+                    } else if (month >= 10 && month <= 12) {
+                        trim4++;
+                    }
+                });
+                
+                // Actualizar los elementos HTML
+                trimestre1.textContent = trim1;
+                trimestre2.textContent = trim2;
+                trimestre3.textContent = trim3;
+                trimestre4.textContent = trim4;
+            }
+            
+            // Actualizar estadísticas mensuales
+            function updateMonthlyStats() {
+                monthlyStatsGrid.innerHTML = '';
+                
+                // Inicializar contadores para cada mes
+                const monthCounts = Array(12).fill(0);
+                
+                // Obtener el año seleccionado en el filtro
+                const selectedYear = yearFilter.value;
+                
+                // Filtrar registros por año si no es "todos"
+                let recordsToCheck = records;
+                if (selectedYear !== 'todos') {
+                    recordsToCheck = records.filter(record => record.year.toString() === selectedYear);
+                }
+                
+                // Contar por mes
+                recordsToCheck.forEach(record => {
+                    const month = getMonthFromDate(record.dictamenDate);
+                    if (month >= 1 && month <= 12) {
+                        monthCounts[month - 1]++;
+                    }
+                });
+                
+                // Crear elementos para cada mes
+                monthCounts.forEach((count, index) => {
+                    const monthStatItem = document.createElement('div');
+                    monthStatItem.className = 'month-stat-item';
+                    
+                    monthStatItem.innerHTML = `
+                        <span class="month-stat-value">${count}</span>
+                        <span class="month-stat-label">${monthNames[index]}</span>
+                    `;
+                    
+                    monthlyStatsGrid.appendChild(monthStatItem);
+                });
+                
+                // Mostrar u ocultar la sección de estadísticas mensuales
+                const hasData = monthCounts.some(count => count > 0);
+                monthlyStats.style.display = hasData ? 'block' : 'none';
             }
             
             // Renderizar la tabla de registros
@@ -1844,7 +2119,8 @@
                 // Determinar qué registros mostrar
                 const searchText = searchInput.value.trim();
                 const selectedYear = yearFilter.value;
-                const hasActiveFilter = searchText || selectedYear !== 'todos';
+                const selectedMonth = monthFilter.value;
+                const hasActiveFilter = searchText || selectedYear !== 'todos' || selectedMonth !== 'todos';
                 
                 const recordsToRender = hasActiveFilter ? filteredRecords : records;
                 
@@ -1956,7 +2232,8 @@
             function goToNextPage() {
                 const searchText = searchInput.value.trim();
                 const selectedYear = yearFilter.value;
-                const hasActiveFilter = searchText || selectedYear !== 'todos';
+                const selectedMonth = monthFilter.value;
+                const hasActiveFilter = searchText || selectedYear !== 'todos' || selectedMonth !== 'todos';
                 const recordsToRender = hasActiveFilter ? filteredRecords : records;
                 const totalPages = Math.ceil(recordsToRender.length / recordsPerPage);
                 
@@ -2133,6 +2410,8 @@
                     if (!firebaseInitialized) {
                         updateYearFilter();
                         updateStats();
+                        updateTrimestreStats();
+                        updateMonthlyStats();
                         renderTable();
                     }
                     
@@ -2238,6 +2517,7 @@
             function filterRecords() {
                 const searchText = searchInput.value.trim();
                 const selectedYear = yearFilter.value;
+                const selectedMonth = monthFilter.value;
                 
                 // Determinar si la búsqueda es solo números (para búsqueda exacta en columna N°)
                 const isNumberOnly = /^\d+$/.test(searchText);
@@ -2246,8 +2526,15 @@
                     // Filtro por año
                     const yearMatch = selectedYear === 'todos' || record.year.toString() === selectedYear;
                     
+                    // Filtro por mes
+                    let monthMatch = selectedMonth === 'todos';
+                    if (selectedMonth !== 'todos') {
+                        const month = getMonthFromDate(record.dictamenDate);
+                        monthMatch = month.toString() === selectedMonth;
+                    }
+                    
                     if (!searchText) {
-                        return yearMatch;
+                        return yearMatch && monthMatch;
                     }
                     
                     const searchLower = searchText.toLowerCase();
@@ -2256,7 +2543,7 @@
                     // 1. Si es solo números, busca coincidencia exacta en la columna N°
                     if (isNumberOnly) {
                         const numberMatch = record.number.toString() === searchText;
-                        if (numberMatch) return yearMatch && true;
+                        if (numberMatch) return yearMatch && monthMatch && true;
                     }
                     
                     // 2. Busca en TODOS los campos (incluyendo los ocultos) de manera parcial
@@ -2273,10 +2560,12 @@
                         // También buscar en el número como texto parcial (si no es búsqueda exacta)
                         (!isNumberOnly && record.number.toString().toLowerCase().includes(searchLower));
                     
-                    return yearMatch && textMatch;
+                    return yearMatch && monthMatch && textMatch;
                 });
                 
                 currentPage = 1;
+                updateTrimestreStats();
+                updateMonthlyStats();
                 renderTable();
             }
             
