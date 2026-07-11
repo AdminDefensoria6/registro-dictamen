@@ -108,7 +108,7 @@
         }
 
         .monthly-stats {
-            display: none; /* Oculto por defecto, se mostrará si hay datos */
+            display: none;
             overflow-x: auto;
             margin-top: 10px;
             padding: 10px;
@@ -1360,8 +1360,8 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="assignedUser" class="form-label">Usuario asignado</label>
-                                <select id="assignedUser" class="form-input">
+                                <label for="assignedUser" class="form-label">Usuario asignado *</label>
+                                <select id="assignedUser" class="form-input" required>
                                     <option value="">Seleccione un usuario</option>
                                     <option value="Bazante Nadia Romina">Bazante Nadia Romina</option>
                                     <option value="Boillat Cesar Enrique">Boillat Cesar Enrique</option>
@@ -1383,10 +1383,10 @@
                                 </select>
                             </div>
                             <div class="form-group" id="firmaDefensorGroup">
-                                <label class="form-label">Firma Defensor Titular</label>
+                                <label class="form-label">Firma Defensor Titular *</label>
                                 <div class="firma-options">
                                     <div class="firma-option">
-                                        <input type="radio" id="firmaDefensorSi" name="firmaDefensor" value="Sí" checked>
+                                        <input type="radio" id="firmaDefensorSi" name="firmaDefensor" value="Sí" checked required>
                                         <label for="firmaDefensorSi">Sí</label>
                                     </div>
                                     <div class="firma-option">
@@ -1395,8 +1395,8 @@
                                     </div>
                                 </div>
                                 <div class="dynamic-firma-field" id="subroganteField">
-                                    <label class="form-label">Firma Defensor Subrogante</label>
-                                    <input type="text" id="firmaDefensorSubrogante" class="form-input subrogante-input" placeholder="Nombre del defensor subrogante">
+                                    <label class="form-label">Firma Defensor Subrogante *</label>
+                                    <input type="text" id="firmaDefensorSubrogante" class="form-input subrogante-input" placeholder="Nombre del defensor subrogante" required>
                                 </div>
                             </div>
                             <div class="form-group" id="createdAtContainer" style="display: none;">
@@ -1432,8 +1432,8 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="expediente" class="form-label">Expediente</label>
-                                <input type="text" id="expediente" class="form-input" placeholder="Número o referencia del expediente (texto libre)">
+                                <label for="expediente" class="form-label">Expediente *</label>
+                                <input type="text" id="expediente" class="form-input" placeholder="Número o referencia del expediente (texto libre)" required>
                             </div>
                         </div>
                     </div>
@@ -1673,7 +1673,7 @@
             const searchInput = document.getElementById('searchInput');
             const yearFilter = document.getElementById('yearFilter');
             const monthFilter = document.getElementById('monthFilter');
-            const topicFilter = document.getElementById('topicFilter'); // Nuevo filtro
+            const topicFilter = document.getElementById('topicFilter');
             const newRecordBtn = document.getElementById('newRecordBtn');
             const emptyStateBtn = document.getElementById('emptyStateBtn');
             const cancelBtn = document.getElementById('cancelBtn');
@@ -1697,6 +1697,7 @@
             const trimestre4 = document.getElementById('trimestre4');
             
             // Elementos del formulario
+            const subjectInput = document.getElementById('subject');
             const dictamenDateInput = document.getElementById('dictamenDate');
             const topicSelect = document.getElementById('topic');
             const assignedUserSelect = document.getElementById('assignedUser');
@@ -1705,11 +1706,11 @@
             const subroganteField = document.getElementById('subroganteField');
             const firmaDefensorSubroganteInput = document.getElementById('firmaDefensorSubrogante');
             const expedienteInput = document.getElementById('expediente');
+            const contentTextarea = document.getElementById('content');
             const createdAtContainer = document.getElementById('createdAtContainer');
             const createdAtDisplay = document.getElementById('createdAtDisplay');
             
             // Elementos de contenido con paginación
-            const contentTextarea = document.getElementById('content');
             const wordCount = document.getElementById('wordCount');
             const clearContent = document.getElementById('clearContent');
             const pageInfoContent = document.getElementById('pageInfoContent');
@@ -1843,7 +1844,7 @@
                 searchInput.addEventListener('input', filterRecords);
                 yearFilter.addEventListener('change', filterRecords);
                 monthFilter.addEventListener('change', filterRecords);
-                topicFilter.addEventListener('change', filterRecords); // Nuevo evento
+                topicFilter.addEventListener('change', filterRecords);
                 viewAllBtn.addEventListener('click', viewAllRecords);
                 prevPageBtn.addEventListener('click', goToPrevPage);
                 nextPageBtn.addEventListener('click', goToNextPage);
@@ -2304,38 +2305,58 @@
                 recordModal.style.display = 'none';
             }
             
-            // Guardar registro (nuevo o editado)
+            // Guardar registro (nuevo o editado) - VALIDACIÓN MEJORADA
             async function saveRecord(e) {
                 e.preventDefault();
                 
-                if (!validateDateField(dictamenDateInput)) {
-                    showNotification("Por favor, ingrese una fecha de dictamen válida en formato DD/MM/AAAA", "error");
+                // Validar todos los campos obligatorios
+                const subject = subjectInput.value.trim();
+                const dictamenDate = dictamenDateInput.value.trim();
+                const topic = topicSelect.value;
+                const assignedUser = assignedUserSelect.value;
+                const expediente = expedienteInput.value.trim();
+                const content = getFullContent().trim();
+                
+                // Validar radio de firma defensor (siempre uno debe estar seleccionado)
+                const firmaDefensorSelected = document.querySelector('input[name="firmaDefensor"]:checked');
+                const firmaDefensor = firmaDefensorSelected ? firmaDefensorSelected.value : '';
+                
+                // Validar subrogante si firma es "No"
+                let firmaDefensorSubrogante = '';
+                if (firmaDefensor === 'No') {
+                    firmaDefensorSubrogante = firmaDefensorSubroganteInput.value.trim();
+                    if (!firmaDefensorSubrogante) {
+                        showNotification("Falta completar campos obligatorios para registrar el Dictamen.", "error");
+                        firmaDefensorSubroganteInput.focus();
+                        return;
+                    }
+                }
+                
+                // Validar campos obligatorios
+                if (!subject || !dictamenDate || !topic || !assignedUser || !expediente || !content) {
+                    showNotification("Falta completar campos obligatorios para registrar el Dictamen.", "error");
+                    
+                    // Enfocar el primer campo vacío para ayudar al usuario
+                    if (!subject) subjectInput.focus();
+                    else if (!dictamenDate) dictamenDateInput.focus();
+                    else if (!topic) topicSelect.focus();
+                    else if (!assignedUser) assignedUserSelect.focus();
+                    else if (!expediente) expedienteInput.focus();
+                    else if (!content) contentTextarea.focus();
+                    return;
+                }
+                
+                // Validar formato de fecha
+                if (!isValidDate(dictamenDate)) {
+                    showNotification("Falta completar campos obligatorios para registrar el Dictamen.", "error");
                     dictamenDateInput.focus();
                     return;
                 }
                 
+                // Si todo está bien, proceder a guardar
                 saveBtnText.style.display = 'none';
                 saveBtnSpinner.style.display = 'inline-block';
                 saveBtn.disabled = true;
-                
-                const subject = document.getElementById('subject').value;
-                const dictamenDate = dictamenDateInput.value;
-                const topic = topicSelect.value;
-                const assignedUser = assignedUserSelect.value;
-                const expediente = expedienteInput.value;
-                const content = getFullContent();
-                
-                // Determinar qué firma está seleccionada
-                const firmaDefensor = document.querySelector('input[name="firmaDefensor"]:checked').value;
-                const firmaDefensorSubrogante = firmaDefensor === 'No' ? firmaDefensorSubroganteInput.value : '';
-                
-                if (!subject || !dictamenDate || !content || !topic) {
-                    showNotification("Por favor, complete los campos obligatorios (*)", "error");
-                    saveBtnText.style.display = 'inline-block';
-                    saveBtnSpinner.style.display = 'none';
-                    saveBtn.disabled = false;
-                    return;
-                }
                 
                 const year = getYearFromDate(dictamenDate);
                 
@@ -2495,7 +2516,7 @@
                     editingId = id;
                     document.getElementById('modalTitle').textContent = 'Editar Dictamen';
                     document.getElementById('recordId').value = record.id;
-                    document.getElementById('subject').value = record.subject;
+                    subjectInput.value = record.subject;
                     
                     dictamenDateInput.value = formatDateForDisplay(record.dictamenDate);
                     dictamenDateInput.style.borderColor = 'var(--success-color)';
@@ -2534,28 +2555,24 @@
                 }
             }
             
-            // Filtrar registros - SISTEMA DE BÚSQUEDA MEJORADO (ahora con temática)
+            // Filtrar registros
             function filterRecords() {
                 const searchText = searchInput.value.trim();
                 const selectedYear = yearFilter.value;
                 const selectedMonth = monthFilter.value;
-                const selectedTopic = topicFilter.value; // Nuevo filtro
+                const selectedTopic = topicFilter.value;
                 
-                // Determinar si la búsqueda es solo números (para búsqueda exacta en columna N°)
                 const isNumberOnly = /^\d+$/.test(searchText);
                 
                 filteredRecords = records.filter(record => {
-                    // Filtro por año
                     const yearMatch = selectedYear === 'todos' || record.year.toString() === selectedYear;
                     
-                    // Filtro por mes
                     let monthMatch = selectedMonth === 'todos';
                     if (selectedMonth !== 'todos') {
                         const month = getMonthFromDate(record.dictamenDate);
                         monthMatch = month.toString() === selectedMonth;
                     }
                     
-                    // Filtro por temática
                     const topicMatch = selectedTopic === 'todos' || record.topic === selectedTopic;
                     
                     if (!searchText) {
@@ -2564,14 +2581,11 @@
                     
                     const searchLower = searchText.toLowerCase();
                     
-                    // BÚSQUEDA INTELIGENTE:
-                    // 1. Si es solo números, busca coincidencia exacta en la columna N°
                     if (isNumberOnly) {
                         const numberMatch = record.number.toString() === searchText;
                         if (numberMatch) return yearMatch && monthMatch && topicMatch && true;
                     }
                     
-                    // 2. Busca en TODOS los campos (incluyendo los ocultos) de manera parcial
                     const textMatch = 
                         (record.subject && record.subject.toLowerCase().includes(searchLower)) ||
                         (record.topic && record.topic.toLowerCase().includes(searchLower)) ||
@@ -2582,7 +2596,6 @@
                         (record.firmaDefensorSubrogante && record.firmaDefensorSubrogante.toLowerCase().includes(searchLower)) ||
                         (record.year && record.year.toString().toLowerCase().includes(searchLower)) ||
                         (formatDateForDisplay(record.dictamenDate) && formatDateForDisplay(record.dictamenDate).toLowerCase().includes(searchLower)) ||
-                        // También buscar en el número como texto parcial (si no es búsqueda exacta)
                         (!isNumberOnly && record.number.toString().toLowerCase().includes(searchLower));
                     
                     return yearMatch && monthMatch && topicMatch && textMatch;
@@ -2611,7 +2624,6 @@
                         registroDisplay = formatDateTimeArgentina(record.createdAt);
                     }
                     
-                    // Obtener texto para firma seleccionada
                     let firmaText = '';
                     if (record.firmaDefensor === 'No' && record.firmaDefensorSubrogante) {
                         firmaText = `<strong>Firma Defensor Titular:</strong> No<br><strong>Firma Defensor Subrogante:</strong> ${record.firmaDefensorSubrogante}`;
