@@ -1519,7 +1519,16 @@
                             })
                         })
                     })
-                })
+                }),
+                // Simulación básica para transacciones en modo local
+                runTransaction: async (callback) => {
+                    const transaction = {
+                        get: (ref) => ref.get(),
+                        set: (ref, data) => Promise.resolve(),
+                        update: (ref, data) => Promise.resolve()
+                    };
+                    return callback(transaction);
+                }
             };
         }
 
@@ -1663,6 +1672,45 @@
             }, 5000);
         }
 
+        // Obtener el siguiente número de dictamen para un año de forma atómica (con transacción)
+        async function getNextNumberAtomic(year) {
+            if (!firebaseInitialized) {
+                // Modo local: sin concurrencia, usar el método simple
+                const yearRecords = records.filter(record => record.year === year);
+                if (yearRecords.length === 0) return 1;
+                const numbers = yearRecords.map(record => record.number);
+                return Math.max(...numbers) + 1;
+            }
+
+            const counterRef = db.collection("contadores").doc(year.toString());
+
+            try {
+                const result = await db.runTransaction(async (transaction) => {
+                    const doc = await transaction.get(counterRef);
+                    if (!doc.exists) {
+                        // Si no existe el contador para este año, crearlo con valor 1
+                        transaction.set(counterRef, { year: Number(year), currentNumber: 1 });
+                        return 1;
+                    } else {
+                        const newNumber = doc.data().currentNumber + 1;
+                        transaction.update(counterRef, { currentNumber: newNumber });
+                        return newNumber;
+                    }
+                });
+                return result;
+            } catch (error) {
+                console.error("Error en transacción para obtener número:", error);
+                // Fallback: intentar obtener el máximo de los registros existentes
+                const snapshot = await db.collection("dictamenes")
+                    .where("year", "==", year)
+                    .orderBy("number", "desc")
+                    .limit(1)
+                    .get();
+                if (snapshot.empty) return 1;
+                return snapshot.docs[0].data().number + 1;
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // Elementos del DOM
             const recordsBody = document.getElementById('recordsBody');
@@ -1772,7 +1820,6 @@
                         });
                         
                         // ORDENAMIENTO DESCENDENTE POR NÚMERO (Y AÑO)
-                        // Primero ordena por año descendente, luego por número descendente
                         records.sort((a, b) => {
                             if (Number(a.year) !== Number(b.year)) {
                                 return Number(b.year) - Number(a.year);
@@ -1782,9 +1829,8 @@
                         
                         updateYearFilter();
                         updateStats();
-                        updateTrimestreStats();
-                        updateMonthlyStats();
-                        renderTable();
+                        // Actualiza filtros, estadísticas y tabla en un solo paso
+                        filterRecords();
                         
                         loadingOverlay.style.display = 'none';
                     }, (error) => {
@@ -1813,9 +1859,7 @@
 
                         updateYearFilter();
                         updateStats();
-                        updateTrimestreStats();
-                        updateMonthlyStats();
-                        renderTable();
+                        filterRecords();
                     } else {
                         emptyState.style.display = 'block';
                     }
@@ -2013,38 +2057,6 @@
                     option.textContent = year;
                     yearFilter.appendChild(option);
                 });
-            }
-            
-            // Obtener el siguiente número de dictamen para un año específico
-            async function getNextNumberForYear(year) {
-                if (!firebaseInitialized) {
-                    const yearRecords = records.filter(record => record.year === year);
-                    if (yearRecords.length === 0) return 1;
-                    
-                    const numbers = yearRecords.map(record => record.number);
-                    return Math.max(...numbers) + 1;
-                }
-                
-                try {
-                    const snapshot = await db.collection("dictamenes")
-                        .where("year", "==", year)
-                        .orderBy("number", "desc")
-                        .limit(1)
-                        .get();
-                    
-                    if (snapshot.empty) {
-                        return 1;
-                    } else {
-                        return snapshot.docs[0].data().number + 1;
-                    }
-                } catch (error) {
-                    console.error("Error obteniendo el siguiente número:", error);
-                    const yearRecords = records.filter(record => record.year === year);
-                    if (yearRecords.length === 0) return 1;
-                    
-                    const numbers = yearRecords.map(record => record.number);
-                    return Math.max(...numbers) + 1;
-                }
             }
             
             // Actualizar estadísticas principales
@@ -2309,7 +2321,7 @@
             async function saveRecord(e) {
                 e.preventDefault();
                 
-                // Validar todos los campos obligatorios
+                // Obtener valores del formulario
                 const subject = subjectInput.value.trim();
                 const dictamenDate = dictamenDateInput.value.trim();
                 const topic = topicSelect.value;
@@ -2325,35 +2337,56 @@
                 let firmaDefensorSubrogante = '';
                 if (firmaDefensor === 'No') {
                     firmaDefensorSubrogante = firmaDefensorSubroganteInput.value.trim();
-                    if (!firmaDefensorSubrogante) {
-                        showNotification("Falta completar campos obligatorios para registrar el Dictamen.", "error");
-                        firmaDefensorSubroganteInput.focus();
-                        return;
-                    }
                 }
                 
-                // Validar campos obligatorios
-                if (!subject || !dictamenDate || !topic || !assignedUser || !expediente || !content) {
-                    showNotification("Falta completar campos obligatorios para registrar el Dictamen.", "error");
-                    
-                    // Enfocar el primer campo vacío para ayudar al usuario
-                    if (!subject) subjectInput.focus();
-                    else if (!dictamenDate) dictamenDateInput.focus();
-                    else if (!topic) topicSelect.focus();
-                    else if (!assignedUser) assignedUserSelect.focus();
-                    else if (!expediente) expedienteInput.focus();
-                    else if (!content) contentTextarea.focus();
+                // --- VALIDACIONES ---
+                // 1. Campos obligatorios del HTML (marcados con required)
+                if (!subject) {
+                    showNotification("El campo 'Asunto' es obligatorio.", "error");
+                    subjectInput.focus();
+                    return;
+                }
+                if (!dictamenDate) {
+                    showNotification("El campo 'Fecha de Dictamen' es obligatorio.", "error");
+                    dictamenDateInput.focus();
+                    return;
+                }
+                if (!topic) {
+                    showNotification("Debe seleccionar una 'Temática'.", "error");
+                    topicSelect.focus();
+                    return;
+                }
+                if (!assignedUser) {
+                    showNotification("Debe seleccionar un 'Usuario asignado'.", "error");
+                    assignedUserSelect.focus();
+                    return;
+                }
+                if (!expediente) {
+                    showNotification("El campo 'Expediente' es obligatorio.", "error");
+                    expedienteInput.focus();
+                    return;
+                }
+                if (!content) {
+                    showNotification("El 'Contenido del Dictamen' no puede estar vacío.", "error");
+                    contentTextarea.focus();
                     return;
                 }
                 
-                // Validar formato de fecha
+                // 2. Validar formato de fecha
                 if (!isValidDate(dictamenDate)) {
-                    showNotification("Falta completar campos obligatorios para registrar el Dictamen.", "error");
+                    showNotification("La fecha debe tener el formato DD/MM/AAAA y ser válida.", "error");
                     dictamenDateInput.focus();
                     return;
                 }
                 
-                // Si todo está bien, proceder a guardar
+                // 3. Si firma es "No", el subrogante es obligatorio
+                if (firmaDefensor === 'No' && !firmaDefensorSubrogante) {
+                    showNotification("Cuando la firma es 'No', debe indicar el nombre del Defensor Subrogante.", "error");
+                    firmaDefensorSubroganteInput.focus();
+                    return;
+                }
+                
+                // Si todas las validaciones pasan, proceder a guardar
                 saveBtnText.style.display = 'none';
                 saveBtnSpinner.style.display = 'inline-block';
                 saveBtn.disabled = true;
@@ -2362,7 +2395,8 @@
                 
                 try {
                     if (editingId === null) {
-                        const nextNumber = await getNextNumberForYear(year);
+                        // --- NUEVO REGISTRO ---
+                        const nextNumber = await getNextNumberAtomic(year);
                         const createdAt = getCurrentTimestampArgentina();
                         
                         const newRecord = {
@@ -2387,8 +2421,13 @@
                             records.push(newRecord);
                             saveRecordsToLocalStorage();
                             showNotification("Dictamen creado correctamente (modo local)", "success");
+                            // Actualizar vista local
+                            updateYearFilter();
+                            updateStats();
+                            filterRecords();
                         }
                     } else {
+                        // --- EDICIÓN ---
                         if (firebaseInitialized) {
                             const recordRef = db.collection("dictamenes").doc(editingId);
                             const existingRecord = await recordRef.get();
@@ -2404,19 +2443,29 @@
                                     firmaDefensorSubrogante,
                                     expediente,
                                     content,
-                                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                                    updatedAt: getCurrentTimestampArgentina()
                                 };
                                 
-                                if (year !== data.year) {
-                                    const nextNumber = await getNextNumberForYear(year);
+                                // Si el año cambió, obtener nuevo número
+                                if (String(year) !== String(data.year)) {
+                                    const nextNumber = await getNextNumberAtomic(year);
                                     updateData.number = nextNumber;
                                     updateData.year = year;
+                                } else {
+                                    // Mantener el número y año originales
+                                    updateData.number = data.number;
+                                    updateData.year = data.year;
                                 }
                                 
                                 await recordRef.update(updateData);
                                 showNotification("Dictamen actualizado correctamente", "success");
+                            } else {
+                                showNotification("El registro que intenta editar ya no existe.", "error");
+                                closeModal();
+                                return;
                             }
                         } else {
+                            // Modo local
                             const index = records.findIndex(record => record.id === editingId);
                             
                             if (index !== -1) {
@@ -2433,8 +2482,8 @@
                                     updatedAt: new Date().toISOString()
                                 };
                                 
-                                if (year !== data.year) {
-                                    const nextNumber = await getNextNumberForYear(year);
+                                if (String(year) !== String(data.year)) {
+                                    const nextNumber = await getNextNumberAtomic(year);
                                     updateData.number = nextNumber;
                                     updateData.year = year;
                                 } else {
@@ -2445,18 +2494,19 @@
                                 records[index] = { ...records[index], ...updateData };
                                 saveRecordsToLocalStorage();
                                 showNotification("Dictamen actualizado correctamente (modo local)", "success");
+                                // Actualizar vista local
+                                updateYearFilter();
+                                updateStats();
+                                filterRecords();
+                            } else {
+                                showNotification("El registro que intenta editar no se encontró en modo local.", "error");
+                                closeModal();
+                                return;
                             }
                         }
                     }
                     
-                    if (!firebaseInitialized) {
-                        updateYearFilter();
-                        updateStats();
-                        updateTrimestreStats();
-                        updateMonthlyStats();
-                        renderTable();
-                    }
-                    
+                    // Cerrar modal y resetear formulario
                     closeModal();
                     recordForm.reset();
                     
@@ -2467,6 +2517,8 @@
                     saveBtnText.style.display = 'inline-block';
                     saveBtnSpinner.style.display = 'none';
                     saveBtn.disabled = false;
+                    // Limpiar editingId después de guardar (éxito o error)
+                    editingId = null;
                 }
             }
             
