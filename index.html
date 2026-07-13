@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dictámenes</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
+        /* ===== ESTILOS DE INDEX (1) ===== */
         :root {
             --primary-color: #2563eb;
             --primary-light: #3b82f6;
@@ -107,6 +108,7 @@
             line-height: 1.1;
         }
 
+        /* Estadísticas mensuales (grid de 12) */
         .monthly-stats {
             display: none;
             overflow-x: auto;
@@ -146,6 +148,42 @@
             text-align: center;
             margin-top: 1px;
             line-height: 1;
+        }
+
+        /* Banner de migración */
+        .migration-banner {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .migration-banner p {
+            color: #92400e;
+            font-weight: 500;
+            margin: 0;
+        }
+        .migration-banner .btn {
+            background: #f59e0b;
+            color: #fff;
+            padding: 10px 22px;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: .2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .migration-banner .btn:hover {
+            background: #d97706;
+            transform: translateY(-2px);
         }
 
         .controls-container {
@@ -230,7 +268,6 @@
             background-color: var(--primary-color);
             color: white;
         }
-
         .btn-primary:hover {
             background-color: var(--primary-dark);
             transform: translateY(-2px);
@@ -241,7 +278,6 @@
             background-color: var(--secondary-color);
             color: white;
         }
-
         .btn-secondary:hover {
             background-color: #475569;
             transform: translateY(-2px);
@@ -297,63 +333,67 @@
         tr {
             transition: var(--transition);
         }
-
         tr:last-child td {
             border-bottom: none;
         }
-
         tr:nth-child(even) {
             background-color: var(--light-gray);
         }
-
         tr:hover {
             background-color: #f1f5f9;
         }
 
         .action-buttons {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             gap: 6px;
-            min-width: 100px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
+        /* Botones modernizados */
         .action-btn {
-            padding: 6px 10px;
-            border-radius: var(--radius-sm);
+            padding: 6px 14px;
+            border-radius: 30px;
             font-size: 0.8rem;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
             border: none;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 5px;
-            white-space: nowrap;
-            width: 100%;
+            gap: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            letter-spacing: 0.3px;
         }
 
         .btn-view {
-            background-color: var(--info-color);
+            background: linear-gradient(145deg, #0ea5e9, #0284c7);
             color: white;
         }
-
         .btn-view:hover {
-            background-color: #0891b2;
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.35);
+        }
+        .btn-view:active {
+            transform: scale(0.96);
         }
 
         .btn-edit {
-            background-color: var(--warning-color);
+            background: linear-gradient(145deg, #f59e0b, #d97706);
             color: white;
         }
-
         .btn-edit:hover {
-            background-color: #d97706;
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.35);
+        }
+        .btn-edit:active {
+            transform: scale(0.96);
         }
 
-        /* Modal */
+        /* Modales */
         .modal {
             display: none;
             position: fixed;
@@ -380,6 +420,16 @@
             padding: 20px;
             position: relative;
             animation: modalFadeIn 0.3s ease-out;
+        }
+
+        /* Modal de formulario: tamaño mediano y responsivo */
+        #formModal .modal-content {
+            max-width: 750px;
+        }
+
+        /* Modal de vista: un poco más ancho */
+        #viewModal .modal-content {
+            max-width: 800px;
         }
 
         @keyframes modalFadeIn {
@@ -434,7 +484,6 @@
             margin-bottom: 15px;
         }
 
-        /* Formulario dividido */
         .form-container {
             display: flex;
             flex-direction: column;
@@ -482,16 +531,13 @@
             font-family: monospace;
             letter-spacing: 1px;
         }
-
         .date-input:valid {
             border-color: var(--success-color);
         }
-
         .date-input:invalid:not(:placeholder-shown) {
             border-color: var(--danger-color);
         }
 
-        /* Contenido con paginación */
         .content-container {
             flex: 1;
             display: flex;
@@ -576,7 +622,6 @@
             color: white;
             border-color: var(--primary-color);
         }
-
         .page-btn:disabled {
             cursor: not-allowed;
             opacity: 0.5;
@@ -589,315 +634,82 @@
             margin-top: 15px;
         }
 
-        /* Responsive mejorado para móviles */
-        @media (min-width: 480px) {
-            body {
-                padding: 15px;
-            }
-            
-            .container {
-                padding: 15px;
-            }
-            
-            header {
-                padding: 1.2rem;
-            }
-            
-            h1 {
-                font-size: 1.6rem;
-            }
-            
-            .stats {
-                gap: 10px;
-                padding: 12px;
-            }
-            
-            .stat-item {
-                padding: 8px 0;
-            }
-            
-            .stat-value {
-                font-size: 1.3rem;
-            }
-            
-            .stat-label {
-                font-size: 0.75rem;
-            }
-            
-            .monthly-stats {
-                padding: 12px;
-            }
-            
-            .monthly-stats-grid {
-                gap: 8px;
-            }
-            
-            .month-stat-item {
-                padding: 5px 3px;
-                min-width: 55px;
-            }
-            
-            .month-stat-value {
-                font-size: 0.95rem;
-            }
-            
-            .month-stat-label {
-                font-size: 0.65rem;
-            }
-            
-            .btn {
-                width: auto;
-                min-width: 140px;
-            }
-            
-            .search-container {
-                flex-direction: row;
-                align-items: center;
-            }
-            
-            .year-filter, .month-filter, .topic-filter {
-                width: auto;
-                min-width: 120px;
-            }
-            
-            .form-actions {
-                flex-direction: row;
-                justify-content: flex-end;
-            }
-            
-            .action-buttons {
-                flex-direction: row;
-                justify-content: center;
-            }
-            
-            .action-btn {
-                width: auto;
-                padding: 6px 12px;
-            }
-        }
-
-        @media (min-width: 768px) {
-            .container {
-                padding: 20px;
-            }
-            
-            .header-content {
-                flex-direction: row;
-                align-items: center;
-            }
-            
-            h1 {
-                text-align: left;
-                font-size: 1.8rem;
-            }
-            
-            .controls-container {
-                flex-direction: row;
-                align-items: center;
-            }
-            
-            .search-container {
-                flex: 1;
-            }
-            
-            .year-filter, .month-filter, .topic-filter {
-                width: 140px;
-            }
-            
-            .monthly-stats {
-                display: block;
-            }
-            
-            .monthly-stats-grid {
-                min-width: 1000px;
-            }
-            
-            .form-container {
-                flex-direction: row;
-            }
-            
-            .form-left, .form-right {
-                width: 50%;
-            }
-            
-            .modal-content {
-                max-width: 90%;
-                padding: 24px;
-            }
-            
-            .modal-title {
-                font-size: 1.5rem;
-            }
-            
-            .content-area {
-                max-height: 400px;
-            }
-        }
-
-        @media (min-width: 992px) {
-            .header-content {
-                flex-direction: row;
-            }
-            
-            table {
-                min-width: 100%;
-            }
-            
-            th, td {
-                padding: 12px 8px;
-                font-size: 0.9rem;
-                max-width: 150px;
-            }
-            
-            .action-buttons {
-                flex-direction: row;
-            }
-            
-            .action-btn {
-                padding: 6px 12px;
-                font-size: 0.85rem;
-            }
-            
-            .monthly-stats-grid {
-                min-width: 1200px;
-            }
-        }
-
-        @media (min-width: 1200px) {
-            .container {
-                padding: 20px;
-            }
-            
-            .modal-content {
-                max-width: 1200px;
-                padding: 24px;
-            }
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px 15px;
-            color: var(--text-light);
-        }
-        
-        .empty-state i {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            color: var(--border-color);
-        }
-        
-        .empty-state p {
-            font-size: 1rem;
-            margin-bottom: 20px;
-        }
-        
-        .floating-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-            color: white;
+        .firma-options {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 20px;
-            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
-            cursor: pointer;
-            z-index: 100;
-            transition: var(--transition);
-        }
-        
-        .floating-btn:hover {
-            transform: translateY(-5px) rotate(5deg);
-            box-shadow: 0 15px 30px rgba(37, 99, 235, 0.4);
-        }
-        
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            flex-direction: column;
             gap: 10px;
-            margin-top: 20px;
-            flex-wrap: wrap;
+            margin-top: 5px;
         }
-        
-        .pagination-btn {
-            padding: 8px 16px;
-            border: 1px solid var(--border-color);
-            background-color: var(--white);
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            transition: var(--transition);
+
+        .firma-option {
             display: flex;
             align-items: center;
-            gap: 5px;
-            min-width: 120px;
+            gap: 8px;
+            cursor: pointer;
         }
-        
-        .pagination-btn:hover:not(:disabled) {
-            background-color: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
+
+        .firma-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
         }
-        
-        .pagination-btn:disabled {
-            cursor: not-allowed;
-            opacity: 0.5;
+
+        .firma-option label {
+            cursor: pointer;
+            font-weight: 500;
         }
-        
-        .pagination-info {
-            color: var(--text-light);
-            font-size: 0.9rem;
-            text-align: center;
-            min-width: 120px;
+
+        .dynamic-firma-field {
+            margin-top: 10px;
+            display: none;
         }
-        
-        .year-badge {
+        .dynamic-firma-field.active {
+            display: block;
+        }
+
+        .subrogante-input {
+            margin-top: 10px;
+        }
+
+        .expediente-bold {
+            font-weight: 700 !important;
+        }
+
+        .user-badge {
             display: inline-block;
             padding: 3px 8px;
             border-radius: 12px;
-            background-color: #e0f2fe;
+            background-color: #f0f9ff;
             color: var(--primary-color);
             font-size: 0.7rem;
-            font-weight: 600;
+            font-weight: 500;
+            border: 1px solid #bae6fd;
+            word-break: break-word;
         }
-        
-        .topic-badge {
+
+        .firma-badge {
             display: inline-block;
             padding: 3px 8px;
             border-radius: 12px;
             font-size: 0.7rem;
             font-weight: 500;
-            background-color: #e0e7ff;
-            color: #3730a3;
+            word-break: break-word;
         }
-        
-        .text-badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: 500;
-            background-color: #f0f9ff;
+        .firma-si {
+            background-color: #d1fae5;
+            color: #059669;
+            border: 1px solid #a7f3d0;
+        }
+        .firma-no {
+            background-color: #fef3c7;
+            color: #d97706;
+            border: 1px solid #fde68a;
+        }
+        .firma-subrogante {
+            background-color: #e0f2fe;
             color: var(--info-color);
             border: 1px solid #bae6fd;
         }
-        
-        .text-yes {
-            background-color: #d1fae5;
-            color: #059669;
-            border-color: #a7f3d0;
-        }
-        
-        .text-no {
-            background-color: #fef2f2;
-            color: #dc2626;
-            border-color: #fecaca;
-        }
-        
+
         .time-badge {
             display: inline-block;
             padding: 3px 8px;
@@ -910,7 +722,101 @@
             white-space: normal;
             word-break: break-word;
         }
-        
+
+        .year-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            background-color: #e0f2fe;
+            color: var(--primary-color);
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .topic-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            background-color: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .text-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            background-color: #f0f9ff;
+            color: var(--info-color);
+            border: 1px solid #bae6fd;
+        }
+        .text-yes {
+            background-color: #d1fae5;
+            color: #059669;
+            border-color: #a7f3d0;
+        }
+        .text-no {
+            background-color: #fef2f2;
+            color: #dc2626;
+            border-color: #fecaca;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 15px;
+            color: var(--text-light);
+        }
+        .empty-state i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--border-color);
+        }
+        .empty-state p {
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .pagination-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+            background-color: var(--white);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            min-width: 120px;
+        }
+        .pagination-btn:hover:not(:disabled) {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .pagination-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .pagination-info {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            text-align: center;
+            min-width: 120px;
+        }
+
         .loading {
             display: inline-block;
             width: 20px;
@@ -920,11 +826,10 @@
             border-top-color: #fff;
             animation: spin 1s ease-in-out infinite;
         }
-        
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-        
+
         .notification {
             position: fixed;
             top: 20px;
@@ -943,7 +848,6 @@
             max-width: 90%;
             text-align: center;
         }
-        
         @keyframes slideIn {
             from {
                 opacity: 0;
@@ -954,15 +858,13 @@
                 transform: translate(-50%, 0);
             }
         }
-        
         .notification.error {
             background-color: var(--danger-color);
         }
-        
         .notification.success {
             background-color: var(--success-color);
         }
-        
+
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -975,7 +877,6 @@
             align-items: center;
             z-index: 2000;
         }
-        
         .loading-spinner {
             width: 50px;
             height: 50px;
@@ -984,385 +885,357 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-        
+
         .created-date {
             font-size: 0.75rem;
             color: var(--text-light);
             margin-top: 5px;
         }
-        
-        /* Nuevos estilos para campos adicionales */
-        .firma-options {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 5px;
-        }
-        
-        .firma-option {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-        }
-        
-        .firma-option input[type="radio"] {
-            width: 18px;
-            height: 18px;
-        }
-        
-        .firma-option label {
-            cursor: pointer;
-            font-weight: 500;
-        }
-        
-        .dynamic-firma-field {
-            margin-top: 10px;
-            display: none;
-        }
-        
-        .dynamic-firma-field.active {
-            display: block;
-        }
-        
-        .subrogante-input {
-            margin-top: 10px;
-        }
-        
-        /* Expediente en negrita */
-        .expediente-bold {
-            font-weight: 700 !important;
-        }
-        
-        /* Usuario asignado */
-        .user-badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 12px;
-            background-color: #f0f9ff;
-            color: var(--primary-color);
-            font-size: 0.7rem;
-            font-weight: 500;
-            border: 1px solid #bae6fd;
-            word-break: break-word;
-        }
-        
-        /* Firma defensor badge */
-        .firma-badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: 500;
-            word-break: break-word;
-        }
-        
-        .firma-si {
-            background-color: #d1fae5;
-            color: #059669;
-            border: 1px solid #a7f3d0;
-        }
-        
-        .firma-no {
-            background-color: #fef3c7;
-            color: #d97706;
-            border: 1px solid #fde68a;
-        }
-        
-        .firma-subrogante {
-            background-color: #e0f2fe;
-            color: var(--info-color);
-            border: 1px solid #bae6fd;
-        }
-        
-        /* Estilos para resaltar búsqueda */
-        .search-highlight {
-            background-color: yellow;
-            color: black;
-            font-weight: bold;
-            padding: 2px 0;
-        }
-        
-        /* Mejoras para móviles */
-        @media (max-width: 479px) {
+
+        /* Responsive mejorado para móvil */
+        @media (max-width: 640px) {
             .stats {
                 grid-template-columns: repeat(3, 1fr);
-                gap: 6px;
-                padding: 8px;
+                gap: 4px;
+                padding: 6px;
             }
-            
             .stat-item:nth-child(1) {
                 grid-column: 1 / span 3;
-                margin-bottom: 5px;
             }
-            
             .stat-value {
+                font-size: 1rem;
+            }
+            .stat-label {
+                font-size: 0.6rem;
+            }
+            .monthly-stats-grid {
+                min-width: 400px;
+                gap: 3px;
+            }
+            .month-stat-item {
+                min-width: 30px;
+                padding: 2px 1px;
+            }
+            .month-stat-value {
+                font-size: 0.7rem;
+            }
+            .month-stat-label {
+                font-size: 0.5rem;
+            }
+
+            .controls-container {
+                padding: 10px;
+            }
+            .search-container {
+                flex-direction: column;
+            }
+            .filter-row {
+                flex-direction: column;
+                gap: 6px;
+            }
+            .year-filter, .month-filter, .topic-filter {
+                width: 100%;
+                justify-content: stretch;
+            }
+            select.form-input, .search-input {
+                font-size: 14px;
+                padding: 8px 12px;
+            }
+            .btn {
+                width: 100%;
+                padding: 10px;
+                font-size: 0.9rem;
+            }
+
+            .table-container {
+                border-radius: var(--radius-sm);
+            }
+            table {
+                min-width: 700px;
+                font-size: 0.75rem;
+            }
+            th, td {
+                padding: 6px 4px;
+                max-width: 80px;
+            }
+
+            .action-buttons {
+                flex-direction: row;
+                gap: 4px;
+                flex-wrap: nowrap;
+            }
+            .action-btn {
+                padding: 4px 10px;
+                font-size: 0.7rem;
+                border-radius: 20px;
+                gap: 4px;
+            }
+            .action-btn i {
+                font-size: 0.7rem;
+            }
+
+            /* Ajuste de modales en móvil */
+            #formModal .modal-content,
+            #viewModal .modal-content {
+                max-width: 100%;
+                padding: 12px;
+                border-radius: var(--radius-sm);
+                margin: 10px;
+            }
+            .modal-title {
                 font-size: 1.1rem;
             }
-            
-            .stat-label {
-                font-size: 0.65rem;
+            .form-container {
+                flex-direction: column;
             }
-            
-            .pagination-btn {
-                min-width: 100px;
-                padding: 6px 12px;
-                font-size: 0.85rem;
+            .form-left, .form-right {
+                width: 100%;
             }
-            
-            .pagination-info {
-                min-width: 100px;
-                font-size: 0.85rem;
+            .form-group {
+                margin-bottom: 10px;
             }
-            
-            .modal-content {
-                padding: 15px;
+            .form-input {
+                font-size: 14px;
+                padding: 8px 10px;
             }
-            
-            .firma-options {
-                flex-direction: row;
-                justify-content: space-between;
-            }
-            
             .content-area {
-                font-size: 16px;
+                min-height: 120px;
+                max-height: 200px;
+                font-size: 14px;
             }
-            
-            input, select, textarea {
-                font-size: 16px !important;
+            .content-header, .content-pagination {
+                padding: 4px 8px;
+            }
+            .word-count {
+                font-size: 0.7rem;
+            }
+
+            .pagination {
+                gap: 6px;
+            }
+            .pagination-btn {
+                min-width: 80px;
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+            .pagination-info {
+                font-size: 0.8rem;
+                min-width: 80px;
             }
         }
-        
-        @media (max-width: 320px) {
+
+        @media (max-width: 420px) {
             .stats {
                 grid-template-columns: repeat(2, 1fr);
             }
-            
             .stat-item:nth-child(1) {
                 grid-column: 1 / span 2;
             }
+            .monthly-stats-grid {
+                min-width: 300px;
+            }
+            table {
+                min-width: 600px;
+            }
+            .action-btn {
+                padding: 3px 6px;
+                font-size: 0.65rem;
+            }
+            .action-btn i {
+                font-size: 0.6rem;
+            }
         }
-        
-        /* Scroll suave para móviles */
+
         .table-container::-webkit-scrollbar {
             height: 6px;
         }
-        
         .table-container::-webkit-scrollbar-track {
             background: #f1f1f1;
             border-radius: 10px;
         }
-        
         .table-container::-webkit-scrollbar-thumb {
             background: #c1c1c1;
             border-radius: 10px;
         }
-        
         .table-container::-webkit-scrollbar-thumb:hover {
             background: #a8a8a8;
         }
-        
+
         .content-area::-webkit-scrollbar {
             width: 6px;
         }
-        
         .content-area::-webkit-scrollbar-track {
             background: #f1f1f1;
             border-radius: 10px;
         }
-        
         .content-area::-webkit-scrollbar-thumb {
             background: #c1c1c1;
             border-radius: 10px;
         }
-        
+
         .monthly-stats::-webkit-scrollbar {
             height: 4px;
         }
-        
         .monthly-stats::-webkit-scrollbar-track {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
         }
-        
         .monthly-stats::-webkit-scrollbar-thumb {
             background: rgba(255, 255, 255, 0.3);
             border-radius: 10px;
         }
-        
         .monthly-stats::-webkit-scrollbar-thumb:hover {
             background: rgba(255, 255, 255, 0.5);
+        }
+
+        .hidden {
+            display: none !important;
         }
     </style>
 </head>
 <body>
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="loading-spinner"></div>
-    </div>
-
-    <div class="container">
+    <div class="container" id="app">
         <header>
             <div class="header-content">
-                <h1>Dictámenes</h1>
-                <div class="stats">
+                <h1></i> Dictámenes</h1>
+                <div class="stats" id="statsGrid">
                     <div class="stat-item">
-                        <span class="stat-value" id="totalRecords">0</span>
+                        <span class="stat-value" id="statTotal">0</span>
                         <span class="stat-label">Total</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-value" id="trimestre1">0</span>
-                        <span class="stat-label">Ene-Mar</span>
+                        <span class="stat-value" id="statTrim1">0</span>
+                        <span class="stat-label">Ene–Mar</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-value" id="trimestre2">0</span>
-                        <span class="stat-label">Abr-Jun</span>
+                        <span class="stat-value" id="statTrim2">0</span>
+                        <span class="stat-label">Abr–Jun</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-value" id="trimestre3">0</span>
-                        <span class="stat-label">Jul-Sep</span>
+                        <span class="stat-value" id="statTrim3">0</span>
+                        <span class="stat-label">Jul–Sep</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-value" id="trimestre4">0</span>
-                        <span class="stat-label">Oct-Dic</span>
+                        <span class="stat-value" id="statTrim4">0</span>
+                        <span class="stat-label">Oct–Dic</span>
                     </div>
                 </div>
-                
-                <!-- Estadísticas mensuales -->
+
+                <!-- Estadísticas mensuales (grid de 12) -->
                 <div class="monthly-stats" id="monthlyStats">
-                    <div class="monthly-stats-grid" id="monthlyStatsGrid">
-                        <!-- Se llenará dinámicamente con JavaScript -->
-                    </div>
+                    <div class="monthly-stats-grid" id="monthlyStatsGrid"></div>
                 </div>
             </div>
         </header>
-        
+
+        <!-- BANNER DE MIGRACIÓN -->
+        <div id="migrationBanner" class="migration-banner hidden">
+            <p><i class="fas fa-arrow-right"></i> Se detectó que los números de dictamen no están sincronizados. Haz clic para renumerarlos automáticamente según el orden cronológico.</p>
+            <button class="btn" id="runMigrationBtn"><i class="fas fa-sync-alt"></i> Renumerar</button>
+        </div>
+
+        <!-- CONTROLES -->
         <div class="controls-container">
             <div class="search-container">
-                <input type="text" id="searchInput" class="search-input" placeholder="Buscar por número, asunto, expediente o cualquier campo...">
+                <input type="text" id="searchInput" class="search-input" placeholder="Buscar en todos los campos..." />
                 <div class="filter-row">
                     <div class="year-filter">
-                        <label for="yearFilter" class="form-label">Año:</label>
-                        <select id="yearFilter" class="form-input">
-                            <option value="todos">Todos</option>
+                        <label for="filterYear" class="form-label">Año:</label>
+                        <select id="filterYear" class="form-input">
+                            <option value="todos">Año</option>
                         </select>
                     </div>
                     <div class="month-filter">
-                        <label for="monthFilter" class="form-label">Mes:</label>
-                        <select id="monthFilter" class="form-input">
-                            <option value="todos">Todos</option>
-                            <option value="1">Enero</option>
-                            <option value="2">Febrero</option>
-                            <option value="3">Marzo</option>
-                            <option value="4">Abril</option>
-                            <option value="5">Mayo</option>
-                            <option value="6">Junio</option>
-                            <option value="7">Julio</option>
-                            <option value="8">Agosto</option>
-                            <option value="9">Septiembre</option>
-                            <option value="10">Octubre</option>
-                            <option value="11">Noviembre</option>
-                            <option value="12">Diciembre</option>
+                        <label for="filterMonth" class="form-label">Mes:</label>
+                        <select id="filterMonth" class="form-input">
+                            <option value="todos">Mes</option>
+                            <option value="1">Enero</option><option value="2">Febrero</option>
+                            <option value="3">Marzo</option><option value="4">Abril</option>
+                            <option value="5">Mayo</option><option value="6">Junio</option>
+                            <option value="7">Julio</option><option value="8">Agosto</option>
+                            <option value="9">Septiembre</option><option value="10">Octubre</option>
+                            <option value="11">Noviembre</option><option value="12">Diciembre</option>
                         </select>
                     </div>
                     <div class="topic-filter">
-                        <label for="topicFilter" class="form-label">Temática:</label>
-                        <select id="topicFilter" class="form-input">
-                            <option value="todos">Todas</option>
+                        <label for="filterTopic" class="form-label">Temática:</label>
+                        <select id="filterTopic" class="form-input">
+                            <option value="todos">Temática</option>
                             <option value="Civil">Civil</option>
                             <option value="Familia">Familia</option>
                             <option value="Laboral">Laboral</option>
-                            <option value="Otro">Otro</option>
                             <option value="Penal">Penal</option>
                             <option value="Violencia Familiar">Violencia Familiar</option>
+                            <option value="Otro">Otro</option>
                         </select>
                     </div>
                 </div>
             </div>
-            <button id="newRecordBtn" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Nuevo Dictamen
+            <button id="btnNew" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Nuevo
             </button>
         </div>
-        
+
+        <!-- TABLA -->
         <div class="table-container">
-            <table id="recordsTable">
+            <table>
                 <thead>
                     <tr>
-                        <th>N°</th>
-                        <th>Año</th>
-                        <th>Asunto</th>
-                        <th>Fecha de Dictamen</th>
-                        <th>Temática</th>
-                        <th>Usuario Asignado</th>
-                        <th>Firma Defensor</th>
-                        <th>Expediente</th>
-                        <th>Texto</th>
-                        <th>Registrado</th>
-                        <th>Acciones</th>
+                        <th>N°</th><th>Año</th><th>Asunto</th><th>Fecha</th><th>Temática</th>
+                        <th>Usuario</th><th>Firma</th><th>Expediente</th><th>Texto</th><th>Registrado</th><th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody id="recordsBody">
-                    </tbody>
+                <tbody id="tableBody"></tbody>
             </table>
-            <div id="emptyState" class="empty-state">
-                <i class="fas fa-file-contract"></i>
+            <div id="emptyState" class="empty-state hidden">
+                <i class="fas fa-file-alt"></i>
                 <p>No hay dictámenes registrados</p>
-                <button id="emptyStateBtn" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Crear primer dictamen
-                </button>
+                <button id="emptyBtn" class="btn btn-primary"><i class="fas fa-plus"></i> Crear primero</button>
             </div>
         </div>
 
+        <!-- PAGINACIÓN -->
         <div class="pagination">
-            <button id="prevPageBtn" class="pagination-btn" disabled>
-                <i class="fas fa-chevron-left"></i> Anterior
-            </button>
-            <span class="pagination-info" id="pageInfo">Página 1 de 1</span>
-            <button id="nextPageBtn" class="pagination-btn" disabled>
-                Siguiente <i class="fas fa-chevron-right"></i>
-            </button>
+            <button id="prevPage" class="pagination-btn" disabled><i class="fas fa-chevron-left"></i> Anterior</button>
+            <span id="pageInfo" class="pagination-info">Página 1 de 1</span>
+            <button id="nextPage" class="pagination-btn" disabled>Siguiente <i class="fas fa-chevron-right"></i></button>
         </div>
     </div>
-    
-    <div id="recordModal" class="modal">
+
+    <!-- MODAL FORMULARIO (mediano y responsivo) -->
+    <div class="modal" id="formModal">
         <div class="modal-content">
-            <button class="close-btn">&times;</button>
+            <button class="close-btn" id="closeForm">&times;</button>
             <div class="modal-header">
-                <h2 class="modal-title" id="modalTitle">Detalles del Dictamen</h2>
+                <h2 class="modal-title" id="formTitle">Nuevo Dictamen</h2>
             </div>
             <div class="modal-body">
-                <form id="recordForm">
-                    <input type="hidden" id="recordId">
+                <form id="dictamenForm" novalidate>
+                    <input type="hidden" id="editId" />
                     <div class="form-container">
                         <div class="form-left">
                             <div class="form-group">
-                                <label for="subject" class="form-label">Asunto *</label>
-                                <input type="text" id="subject" class="form-input" required>
+                                <label for="fSubject" class="form-label">Asunto *</label>
+                                <input type="text" id="fSubject" class="form-input" required />
                             </div>
                             <div class="form-group">
-                                <label for="dictamenDate" class="form-label">Fecha de Dictamen *</label>
-                                <input type="text" id="dictamenDate" class="form-input date-input" 
-                                       pattern="(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/\d{4}"
-                                       placeholder="DD/MM/AAAA"
-                                       required
-                                       title="Formato: DD/MM/AAAA (Día: 01-31, Mes: 01-12, Año: 4 dígitos)">
-                                <small class="created-date">Formato: DD/MM/AAAA (ej: 15/03/2024)</small>
+                                <label for="fDate" class="form-label">Fecha de Dictamen * (DD/MM/AAAA)</label>
+                                <input type="text" id="fDate" class="form-input date-input" placeholder="DD/MM/AAAA" required pattern="\d{2}/\d{2}/\d{4}" />
+                                <small class="created-date">Ej: 15/03/2024</small>
                             </div>
                             <div class="form-group">
-                                <label for="topic" class="form-label">Temática del Dictamen *</label>
-                                <select id="topic" class="form-input" required>
-                                    <option value="">Seleccione una temática</option>
-                                    <option value="Civil">Civil</option>
-                                    <option value="Familia">Familia</option>
-                                    <option value="Laboral">Laboral</option>
-                                    <option value="Otro">Otro</option>
-                                    <option value="Penal">Penal</option>
-                                    <option value="Violencia Familiar">Violencia Familiar</option>
+                                <label for="fTopic" class="form-label">Temática *</label>
+                                <select id="fTopic" class="form-input" required>
+                                    <option value="">Seleccionar</option>
+                                    <option value="Civil">Civil</option><option value="Familia">Familia</option>
+                                    <option value="Laboral">Laboral</option><option value="Penal">Penal</option>
+                                    <option value="Violencia Familiar">Violencia Familiar</option><option value="Otro">Otro</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="assignedUser" class="form-label">Usuario asignado *</label>
-                                <select id="assignedUser" class="form-input" required>
-                                    <option value="">Seleccione un usuario</option>
+                                <label for="fUser" class="form-label">Usuario Asignado *</label>
+                                <select id="fUser" class="form-input" required>
+                                    <option value="">Seleccionar</option>
                                     <option value="Bazante Nadia Romina">Bazante Nadia Romina</option>
                                     <option value="Boillat Cesar Enrique">Boillat Cesar Enrique</option>
                                     <option value="Cardozo Maria Raquel">Cardozo Maria Raquel</option>
@@ -1386,38 +1259,41 @@
                                 <label class="form-label">Firma Defensor Titular *</label>
                                 <div class="firma-options">
                                     <div class="firma-option">
-                                        <input type="radio" id="firmaDefensorSi" name="firmaDefensor" value="Sí" checked required>
-                                        <label for="firmaDefensorSi">Sí</label>
+                                        <input type="radio" id="firmaSi" name="firma" value="Sí" checked required />
+                                        <label for="firmaSi">Sí</label>
                                     </div>
                                     <div class="firma-option">
-                                        <input type="radio" id="firmaDefensorNo" name="firmaDefensor" value="No">
-                                        <label for="firmaDefensorNo">No</label>
+                                        <input type="radio" id="firmaNo" name="firma" value="No" />
+                                        <label for="firmaNo">No</label>
                                     </div>
                                 </div>
                                 <div class="dynamic-firma-field" id="subroganteField">
-                                    <label class="form-label">Firma Defensor Subrogante *</label>
-                                    <input type="text" id="firmaDefensorSubrogante" class="form-input subrogante-input" placeholder="Nombre del defensor subrogante" required>
+                                    <label class="form-label">Defensor Subrogante *</label>
+                                    <input type="text" id="fSubrogante" class="form-input subrogante-input" placeholder="Nombre completo" />
                                 </div>
                             </div>
-                            <div class="form-group" id="createdAtContainer" style="display: none;">
-                                <label class="form-label">Registrado el</label>
-                                <div class="form-input" style="background-color: #f8fafc;" id="createdAtDisplay"></div>
+                            <div class="form-group" id="createdAtGroup" style="display:none;">
+                                <label class="form-label">Registrado</label>
+                                <div style="background:#f8fafc; padding:10px 14px; border-radius:10px; color:#475569;" id="fCreatedAt">-</div>
                             </div>
                         </div>
-                        
                         <div class="form-right">
                             <div class="form-group">
-                                <label for="content" class="form-label">Contenido del Dictamen *</label>
+                                <label for="fExpediente" class="form-label">Expediente *</label>
+                                <input type="text" id="fExpediente" class="form-input" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="fContent" class="form-label">Contenido *</label>
                                 <div class="content-container">
                                     <div class="content-header">
                                         <span class="word-count" id="wordCount">0 palabras</span>
                                         <div class="content-tools">
                                             <button type="button" id="clearContent" class="page-btn" title="Limpiar contenido">
-                                                <i class="fas fa-trash"></i>
+                                                <i class="fas fa-eraser"></i>
                                             </button>
                                         </div>
                                     </div>
-                                    <textarea id="content" class="content-area" placeholder="Escriba el contenido del dictamen aquí..." required></textarea>
+                                    <textarea id="fContent" class="content-area" placeholder="Escriba el contenido del dictamen..." required></textarea>
                                     <div class="content-pagination">
                                         <span class="page-info" id="pageInfoContent">Página 1</span>
                                         <div class="page-buttons">
@@ -1431,53 +1307,40 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label for="expediente" class="form-label">Expediente *</label>
-                                <input type="text" id="expediente" class="form-input" placeholder="Número o referencia del expediente (texto libre)" required>
-                            </div>
                         </div>
                     </div>
-                    
                     <div class="form-actions">
-                        <button type="button" id="cancelBtn" class="btn btn-secondary">Cancelar</button>
-                        <button type="submit" class="btn btn-primary" id="saveBtn">
-                            <span id="saveBtnText">Guardar</span>
-                            <span id="saveBtnSpinner" class="loading" style="display: none;"></span>
+                        <button type="button" id="cancelForm" class="btn btn-secondary">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <span id="submitText">Guardar</span>
+                            <span class="loading" id="submitSpinner" style="display:none;"></span>
                         </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    
-    <div id="contentModal" class="modal">
+
+    <!-- MODAL VISTA -->
+    <div class="modal" id="viewModal">
         <div class="modal-content">
-            <button class="close-btn">&times;</button>
+            <button class="close-btn" id="closeView">&times;</button>
             <div class="modal-header">
-                <h2 class="modal-title">Dictamen #<span id="contentNumber"></span></h2>
-                <p><strong>Asunto:</strong> <span id="contentSubject"></span></p>
-                <p><strong>Fecha de Dictamen:</strong> <span id="contentDictamenDate"></span></p>
-                <p><strong>Temática:</strong> <span id="contentTopic"></span></p>
-                <p><strong>Usuario asignado:</strong> <span id="contentAssignedUser"></span></p>
-                <div id="firmaContainer">
-                    </div>
-                <p><strong>Expediente:</strong> <span id="contentExpediente"></span></p>
-                <p><strong>Registrado el:</strong> <span id="contentCreatedAt" class="time-badge"></span></p>
+                <h2 class="modal-title" id="viewTitle">Dictamen</h2>
             </div>
             <div class="modal-body">
-                <div class="content-box">
-                    <p id="fullContent"></p>
-                </div>
+                <div class="content-view" id="viewContent"></div>
             </div>
         </div>
     </div>
-    
-    <div id="viewAllBtn" class="floating-btn" title="Ver todos los registros">
-        <i class="fas fa-list"></i>
-    </div>
 
+    <!-- ============================================================ -->
+    <!-- SCRIPT DE 1Z (con KPIs de index (1) y optimización de guardado) -->
+    <!-- ============================================================ -->
     <script>
-        // Configuración de Firebase
+        // ============================================================
+        // CONFIGURACIÓN FIREBASE
+        // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyCA4PlV7FpUZsRSqJaFQrCRoKyShwpPQac",
             authDomain: "librodictamen.firebaseapp.com",
@@ -1487,1231 +1350,694 @@
             appId: "1:5128868565:web:f13be4d1b408526ebd085c"
         };
 
-        // Inicializar Firebase
-        let db;
-        let firebaseInitialized = false;
-        
+        let db = null;
+        let firebaseReady = false;
+        let firestoreUnsubscribe = null;
+
         try {
             firebase.initializeApp(firebaseConfig);
             db = firebase.firestore();
-            firebaseInitialized = true;
-            console.log("Firebase inicializado correctamente");
-        } catch (error) {
-            console.error("Error inicializando Firebase:", error);
-            showNotification("Error de conexión con Firebase. La aplicación funcionará en modo local.", "error");
-            
-            // Firebase simulado para modo local
-            db = {
-                collection: () => ({
-                    orderBy: () => ({
-                        onSnapshot: () => {},
-                        get: () => Promise.resolve({ empty: true, docs: [] })
-                    }),
-                    doc: () => ({
-                        get: () => Promise.resolve({ exists: false }),
-                        update: () => Promise.resolve()
-                    }),
-                    add: () => Promise.resolve(),
-                    where: () => ({
-                        orderBy: () => ({
-                            limit: () => ({
-                                get: () => Promise.resolve({ empty: true, docs: [] })
-                            })
-                        })
-                    })
-                }),
-                // Simulación básica para transacciones en modo local
-                runTransaction: async (callback) => {
-                    const transaction = {
-                        get: (ref) => ref.get(),
-                        set: (ref, data) => Promise.resolve(),
-                        update: (ref, data) => Promise.resolve()
-                    };
-                    return callback(transaction);
-                }
-            };
+            firebaseReady = true;
+            console.log('✅ Firebase conectado correctamente');
+        } catch (e) {
+            console.warn('⚠️ Firebase no disponible, modo local activado', e);
+            toast('No se pudo conectar a Firebase. Modo local (guardado en navegador).', 'info');
+            firebaseReady = false;
         }
 
-        // Función para obtener la fecha y hora actual en Argentina (UTC-3) como Timestamp
-        function getCurrentTimestampArgentina() {
-            return firebase.firestore.Timestamp.now();
+        // ============================================================
+        // ESTADO GLOBAL
+        // ============================================================
+        let allRecords = [];
+        let filtered = [];
+        let currentPage = 1;
+        const perPage = 10;
+        let editingId = null;
+
+        // ============================================================
+        // REFERENCIAS DOM
+        // ============================================================
+        const $ = id => document.getElementById(id);
+        const body = $('tableBody');
+        const emptyState = $('emptyState');
+        const emptyBtn = $('emptyBtn');
+        const search = $('searchInput');
+        const filterYear = $('filterYear');
+        const filterMonth = $('filterMonth');
+        const filterTopic = $('filterTopic');
+        const prevPage = $('prevPage');
+        const nextPage = $('nextPage');
+        const pageInfo = $('pageInfo');
+        const btnNew = $('btnNew');
+        const migrationBanner = $('migrationBanner');
+        const runMigrationBtn = $('runMigrationBtn');
+
+        const formModal = $('formModal');
+        const formTitle = $('formTitle');
+        const editId = $('editId');
+        const fSubject = $('fSubject');
+        const fDate = $('fDate');
+        const fTopic = $('fTopic');
+        const fUser = $('fUser');
+        const fExpediente = $('fExpediente');
+        const fContent = $('fContent');
+        const fSubrogante = $('fSubrogante');
+        const subroganteField = $('subroganteField');
+        const firmaRadios = document.querySelectorAll('input[name="firma"]');
+        const fCreatedAt = $('fCreatedAt');
+        const createdAtGroup = $('createdAtGroup');
+        const submitBtn = $('submitBtn');
+        const submitText = $('submitText');
+        const submitSpinner = $('submitSpinner');
+        const cancelForm = $('cancelForm');
+        const closeForm = $('closeForm');
+        const clearContentBtn = $('clearContent');
+        const wordCount = $('wordCount');
+
+        const viewModal = $('viewModal');
+        const viewTitle = $('viewTitle');
+        const viewContent = $('viewContent');
+        const closeView = $('closeView');
+
+        const statTotal = $('statTotal');
+        const statTrim1 = $('statTrim1');
+        const statTrim2 = $('statTrim2');
+        const statTrim3 = $('statTrim3');
+        const statTrim4 = $('statTrim4');
+        const monthlyStats = $('monthlyStats');
+        const monthlyStatsGrid = $('monthlyStatsGrid');
+
+        // ============================================================
+        // UTILIDADES
+        // ============================================================
+        function formatDateDisplay(str) {
+            if (!str) return '';
+            const parts = str.split('-');
+            if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            return str;
         }
 
-        // Función para formatear fecha/hora EN ARGENTINA (UTC-3)
-        function formatDateTimeArgentina(dateInput) {
-            if (!dateInput) return 'No disponible';
-            
-            let date;
-            
-            if (dateInput.toDate && typeof dateInput.toDate === 'function') {
-                date = dateInput.toDate();
-            } else if (dateInput instanceof Date) {
-                date = dateInput;
-            } else if (typeof dateInput === 'string') {
-                date = new Date(dateInput);
-            } else if (typeof dateInput === 'number') {
-                date = new Date(dateInput);
-            } else {
-                return 'No disponible';
-            }
-            
-            const argentinaTime = date.toLocaleString('es-AR', {
-                timeZone: 'America/Argentina/Buenos_Aires',
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false
-            });
-            
-            return argentinaTime;
+        function formatDateForStorage(str) {
+            const parts = str.split('/');
+            if (parts.length === 3) return `${parts[2]}-${parts[1]}-${parts[0]}`;
+            return str;
         }
 
-        // Función para convertir de DD/MM/AAAA a YYYY-MM-DD (para almacenar)
-        function formatDateForStorage(dateString) {
-            if (!dateString) return '';
-            
-            const parts = dateString.split('/');
-            if (parts.length === 3) {
-                const day = parts[0].padStart(2, '0');
-                const month = parts[1].padStart(2, '0');
-                const year = parts[2];
-                
-                return `${year}-${month}-${day}`;
-            }
-            return dateString;
+        function isValidDate(d) {
+            return /^\d{2}\/\d{2}\/\d{4}$/.test(d) && !isNaN(new Date(d.split('/').reverse().join('-')));
         }
 
-        // Función para convertir de YYYY-MM-DD a DD/MM/AAAA (para mostrar)
-        function formatDateForDisplay(dateString) {
-            if (!dateString) return '';
-            
-            if (dateString.includes('-')) {
-                const parts = dateString.split('-');
-                if (parts.length === 3) {
-                    return `${parts[2]}/${parts[1]}/${parts[0]}`;
-                }
-            } else if (dateString.includes('/')) {
-                return dateString;
-            }
-            return dateString;
+        function getYearFromDate(str) {
+            if (!str) return '';
+            if (str.includes('/')) return str.split('/')[2];
+            if (str.includes('-')) return str.split('-')[0];
+            return '';
         }
 
-        // Función para validar fecha en formato DD/MM/AAAA
-        function isValidDate(dateString) {
-            const pattern = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
-            if (!pattern.test(dateString)) return false;
-            
-            const parts = dateString.split('/');
-            const day = parseInt(parts[0], 10);
-            const month = parseInt(parts[1], 10);
-            const year = parseInt(parts[2], 10);
-            
-            if (year < 1900 || year > 2100) return false;
-            
-            const date = new Date(year, month - 1, day);
-            return date.getFullYear() === year && 
-                   date.getMonth() === month - 1 && 
-                   date.getDate() === day;
+        function getMonthFromDate(str) {
+            if (!str) return 0;
+            if (str.includes('/')) return parseInt(str.split('/')[1], 10);
+            if (str.includes('-')) return parseInt(str.split('-')[1], 10);
+            return 0;
         }
 
-        // Función para obtener el año de una fecha DD/MM/AAAA
-        function getYearFromDate(dateString) {
-            if (!dateString) return new Date().getFullYear().toString();
-            
-            const parts = dateString.split('/');
-            if (parts.length === 3) {
-                return parts[2];
-            }
-            
-            if (dateString.includes('-')) {
-                return dateString.split('-')[0];
-            }
-            
-            return new Date().getFullYear().toString();
+        function formatTimestamp(ts) {
+            if (!ts) return 'No disponible';
+            const d = ts.toDate ? ts.toDate() : new Date(ts);
+            return d.toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires', day: '2-digit', month: '2-digit',
+                year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
         }
 
-        // Función para obtener el mes de una fecha DD/MM/AAAA o YYYY-MM-DD
-        function getMonthFromDate(dateString) {
-            if (!dateString) return 0;
-            
-            let month = 0;
-            
-            if (dateString.includes('/')) {
-                // Formato DD/MM/AAAA
-                const parts = dateString.split('/');
-                if (parts.length === 3) {
-                    month = parseInt(parts[1], 10);
-                }
-            } else if (dateString.includes('-')) {
-                // Formato YYYY-MM-DD
-                const parts = dateString.split('-');
-                if (parts.length === 3) {
-                    month = parseInt(parts[1], 10);
-                }
-            }
-            
-            return month;
+        function toast(msg, type = 'info') {
+            const old = document.querySelector('.notification');
+            if (old) old.remove();
+            const div = document.createElement('div');
+            div.className = `notification ${type}`;
+            div.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i> ${msg}`;
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 4000);
         }
 
-        // Función para mostrar notificaciones
-        function showNotification(message, type = "info") {
-            const notification = document.createElement("div");
-            notification.className = `notification ${type}`;
-            notification.innerHTML = `
-                <i class="fas fa-${type === 'error' ? 'exclamation-circle' : type === 'success' ? 'check-circle' : 'info-circle'}"></i>
-                <span>${message}</span>
-            `;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.remove();
-            }, 5000);
+        function showSpinner(show) {
+            submitText.classList.toggle('hidden', show);
+            submitSpinner.style.display = show ? 'inline-block' : 'none';
+            submitBtn.disabled = show;
         }
 
-        // Obtener el siguiente número de dictamen para un año de forma atómica (con transacción)
-        async function getNextNumberAtomic(year) {
-            if (!firebaseInitialized) {
-                // Modo local: sin concurrencia, usar el método simple
-                const yearRecords = records.filter(record => record.year === year);
-                if (yearRecords.length === 0) return 1;
-                const numbers = yearRecords.map(record => record.number);
-                return Math.max(...numbers) + 1;
+        function getTimestamp() {
+            if (firebaseReady) return firebase.firestore.Timestamp.now();
+            return new Date().toISOString();
+        }
+
+        // ============================================================
+        // MIGRACIÓN: RENUMERAR TODOS LOS DICTÁMENES SEGÚN ORDEN CRONOLÓGICO
+        // ============================================================
+        async function runMigration() {
+            if (!firebaseReady) {
+                toast('Firebase no disponible, no se puede migrar.', 'error');
+                return;
             }
 
-            const counterRef = db.collection("contadores").doc(year.toString());
+            toast('Iniciando migración...', 'info');
+            const coleccion = db.collection('dictamenes');
 
             try {
-                const result = await db.runTransaction(async (transaction) => {
-                    const doc = await transaction.get(counterRef);
-                    if (!doc.exists) {
-                        // Si no existe el contador para este año, crearlo con valor 1
-                        transaction.set(counterRef, { year: Number(year), currentNumber: 1 });
-                        return 1;
-                    } else {
-                        const newNumber = doc.data().currentNumber + 1;
-                        transaction.update(counterRef, { currentNumber: newNumber });
-                        return newNumber;
+                const snapshot = await coleccion.get();
+                if (snapshot.empty) {
+                    toast('No hay dictámenes para migrar.', 'info');
+                    return;
+                }
+
+                const docs = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    let refDate = null;
+                    if (data.createdAt) {
+                        refDate = data.createdAt.toDate ? data.createdAt.toDate() : new Date(data.createdAt);
+                    } else if (data.updatedAt) {
+                        refDate = data.updatedAt.toDate ? data.updatedAt.toDate() : new Date(data.updatedAt);
+                    } else if (data.dictamenDate) {
+                        if (data.dictamenDate.toDate) {
+                            refDate = data.dictamenDate.toDate();
+                        } else {
+                            refDate = new Date(data.dictamenDate);
+                        }
                     }
+                    docs.push({
+                        id: doc.id,
+                        ref: doc.ref,
+                        refDate: refDate || new Date(0),
+                    });
                 });
-                return result;
+
+                docs.sort((a, b) => a.refDate - b.refDate);
+
+                const updates = docs.map((doc, index) => ({ id: doc.id, newNumber: index + 1 }));
+
+                const confirmar = confirm(`¿Renumerar ${updates.length} dictámenes?\nSe asignarán números del 1 al ${updates.length} según el orden cronológico.`);
+                if (!confirmar) {
+                    toast('Migración cancelada.', 'info');
+                    return;
+                }
+
+                const batchSize = 500;
+                const totalBatches = Math.ceil(updates.length / batchSize);
+
+                for (let i = 0; i < totalBatches; i++) {
+                    const batch = db.batch();
+                    const start = i * batchSize;
+                    const end = Math.min(start + batchSize, updates.length);
+                    const slice = updates.slice(start, end);
+
+                    slice.forEach(u => {
+                        const docRef = db.collection('dictamenes').doc(u.id);
+                        batch.update(docRef, { number: u.newNumber });
+                    });
+
+                    await batch.commit();
+                    console.log(`✅ Lote ${i + 1}/${totalBatches} completado (${slice.length} documentos).`);
+                }
+
+                const lastNumber = updates.length;
+                const counterRef = db.collection('contadores').doc('global');
+                await counterRef.set({ currentNumber: lastNumber }, { merge: true });
+                console.log(`🔢 Contador global actualizado a ${lastNumber}`);
+
+                toast(`Migración completada. ${updates.length} dictámenes renumerados.`, 'success');
+                migrationBanner.classList.add('hidden');
+                localStorage.setItem('migracion_hecha', 'true');
+                if (firestoreUnsubscribe) firestoreUnsubscribe();
+                loadFromFirestore();
+
             } catch (error) {
-                console.error("Error en transacción para obtener número:", error);
-                // Fallback: intentar obtener el máximo de los registros existentes
-                const snapshot = await db.collection("dictamenes")
-                    .where("year", "==", year)
-                    .orderBy("number", "desc")
-                    .limit(1)
-                    .get();
-                if (snapshot.empty) return 1;
-                return snapshot.docs[0].data().number + 1;
+                console.error('❌ Error durante la migración:', error);
+                toast('Error en la migración: ' + error.message, 'error');
             }
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // Elementos del DOM
-            const recordsBody = document.getElementById('recordsBody');
-            const emptyState = document.getElementById('emptyState');
-            const recordModal = document.getElementById('recordModal');
-            const contentModal = document.getElementById('contentModal');
-            const recordForm = document.getElementById('recordForm');
-            const searchInput = document.getElementById('searchInput');
-            const yearFilter = document.getElementById('yearFilter');
-            const monthFilter = document.getElementById('monthFilter');
-            const topicFilter = document.getElementById('topicFilter');
-            const newRecordBtn = document.getElementById('newRecordBtn');
-            const emptyStateBtn = document.getElementById('emptyStateBtn');
-            const cancelBtn = document.getElementById('cancelBtn');
-            const viewAllBtn = document.getElementById('viewAllBtn');
-            const closeButtons = document.querySelectorAll('.close-btn');
-            const prevPageBtn = document.getElementById('prevPageBtn');
-            const nextPageBtn = document.getElementById('nextPageBtn');
-            const pageInfo = document.getElementById('pageInfo');
-            const totalRecords = document.getElementById('totalRecords');
-            const saveBtn = document.getElementById('saveBtn');
-            const saveBtnText = document.getElementById('saveBtnText');
-            const saveBtnSpinner = document.getElementById('saveBtnSpinner');
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            const monthlyStats = document.getElementById('monthlyStats');
-            const monthlyStatsGrid = document.getElementById('monthlyStatsGrid');
-            
-            // Elementos para KPIs de trimestre
-            const trimestre1 = document.getElementById('trimestre1');
-            const trimestre2 = document.getElementById('trimestre2');
-            const trimestre3 = document.getElementById('trimestre3');
-            const trimestre4 = document.getElementById('trimestre4');
-            
-            // Elementos del formulario
-            const subjectInput = document.getElementById('subject');
-            const dictamenDateInput = document.getElementById('dictamenDate');
-            const topicSelect = document.getElementById('topic');
-            const assignedUserSelect = document.getElementById('assignedUser');
-            const firmaDefensorSi = document.getElementById('firmaDefensorSi');
-            const firmaDefensorNo = document.getElementById('firmaDefensorNo');
-            const subroganteField = document.getElementById('subroganteField');
-            const firmaDefensorSubroganteInput = document.getElementById('firmaDefensorSubrogante');
-            const expedienteInput = document.getElementById('expediente');
-            const contentTextarea = document.getElementById('content');
-            const createdAtContainer = document.getElementById('createdAtContainer');
-            const createdAtDisplay = document.getElementById('createdAtDisplay');
-            
-            // Elementos de contenido con paginación
-            const wordCount = document.getElementById('wordCount');
-            const clearContent = document.getElementById('clearContent');
-            const pageInfoContent = document.getElementById('pageInfoContent');
-            const prevPageContent = document.getElementById('prevPageContent');
-            const nextPageContent = document.getElementById('nextPageContent');
-            
-            // Variables de estado
-            let records = [];
-            let editingId = null;
-            let filteredRecords = [];
-            let currentPage = 1;
-            const recordsPerPage = 10;
-            const currentYear = new Date().getFullYear();
-            const startYear = 2026;
-            
-            // Variables para paginación de contenido
-            let contentPages = [];
-            let currentContentPage = 1;
-            const wordsPerPage = 5000;
-            
-            // Nombres de meses para mostrar
-            const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-            
-            // Inicializar la aplicación
-            function init() {
-                setupEventListeners();
-                if (firebaseInitialized) {
-                    setupFirestoreListeners();
-                } else {
-                    loadRecordsFromLocalStorage();
-                }
-            }
-            
-            // Configurar listeners de Firestore
-            function setupFirestoreListeners() {
-                loadingOverlay.style.display = 'flex';
-                
-                // Escuchar cambios en la colección de dictámenes
-                db.collection("dictamenes")
-                    .orderBy("dictamenDate", "desc")
-                    .onSnapshot((snapshot) => {
-                        records = [];
-                        snapshot.forEach((doc) => {
-                            const data = doc.data();
-                            records.push({ 
-                                id: doc.id, 
-                                number: data.number || 0,
-                                year: data.year || new Date(data.dictamenDate).getFullYear(),
-                                subject: data.subject || '',
-                                dictamenDate: data.dictamenDate || '',
-                                topic: data.topic || '',
-                                assignedUser: data.assignedUser || '',
-                                firmaDefensor: data.firmaDefensor || '',
-                                firmaDefensorSubrogante: data.firmaDefensorSubrogante || '',
-                                expediente: data.expediente || '',
-                                content: data.content || '',
-                                createdAt: data.createdAt || null
-                            });
-                        });
-                        
-                        // ORDENAMIENTO DESCENDENTE POR NÚMERO (Y AÑO)
-                        records.sort((a, b) => {
-                            if (Number(a.year) !== Number(b.year)) {
-                                return Number(b.year) - Number(a.year);
-                            }
-                            return Number(b.number) - Number(a.number);
-                        });
-                        
-                        updateYearFilter();
-                        updateStats();
-                        // Actualiza filtros, estadísticas y tabla en un solo paso
-                        filterRecords();
-                        
-                        loadingOverlay.style.display = 'none';
-                    }, (error) => {
-                        console.error("Error escuchando cambios:", error);
-                        showNotification("Error cargando datos de Firestore. Usando modo local.", "error");
-                        loadRecordsFromLocalStorage();
-                        
-                        loadingOverlay.style.display = 'none';
-                    });
-            }
-            
-            // Cargar registros desde localStorage como respaldo
-            function loadRecordsFromLocalStorage() {
+        // ============================================================
+        // FUNCIONES DE NUMERACIÓN (OPTIMIZADA)
+        // ============================================================
+        async function getNextNumber() {
+            if (firebaseReady) {
+                const counterRef = db.collection('contadores').doc('global');
                 try {
-                    const storedRecords = localStorage.getItem('dictamenes');
-                    if (storedRecords) {
-                        records = JSON.parse(storedRecords);
-                        
-                        // ORDENAMIENTO DESCENDENTE POR NÚMERO (Y AÑO)
-                        records.sort((a, b) => {
-                            if (Number(a.year) !== Number(b.year)) {
-                                return Number(b.year) - Number(a.year);
-                            }
-                            return Number(b.number) - Number(a.number);
-                        });
+                    // Intentar una transacción rápida (un solo intento)
+                    const result = await db.runTransaction(async (tx) => {
+                        const doc = await tx.get(counterRef);
+                        let current = 1;
+                        if (doc.exists) {
+                            current = doc.data().currentNumber + 1;
+                        }
+                        tx.set(counterRef, { currentNumber: current });
+                        return current;
+                    });
+                    return result;
+                } catch (e) {
+                    console.warn('Transacción falló, usando fallback:', e);
+                    // Fallback simple: máximo + 1
+                    const snap = await db.collection('dictamenes').orderBy('number', 'desc').limit(1).get();
+                    if (snap.empty) return 1;
+                    return snap.docs[0].data().number + 1;
+                }
+            } else {
+                // Modo local
+                if (allRecords.length === 0) return 1;
+                let maxNum = Math.max(...allRecords.map(r => r.number));
+                return maxNum + 1;
+            }
+        }
 
-                        updateYearFilter();
-                        updateStats();
-                        filterRecords();
-                    } else {
-                        emptyState.style.display = 'block';
-                    }
-                } catch (error) {
-                    console.error("Error cargando registros:", error);
-                    records = [];
-                    emptyState.style.display = 'block';
-                }
-            }
-            
-            // Guardar registros en localStorage como respaldo
-            function saveRecordsToLocalStorage() {
-                try {
-                    localStorage.setItem('dictamenes', JSON.stringify(records));
-                } catch (error) {
-                    console.error("Error guardando registros:", error);
-                }
-            }
-            
-            // Configurar event listeners
-            function setupEventListeners() {
-                newRecordBtn.addEventListener('click', openNewRecordModal);
-                emptyStateBtn.addEventListener('click', openNewRecordModal);
-                cancelBtn.addEventListener('click', closeModal);
-                recordForm.addEventListener('submit', saveRecord);
-                searchInput.addEventListener('input', filterRecords);
-                yearFilter.addEventListener('change', filterRecords);
-                monthFilter.addEventListener('change', filterRecords);
-                topicFilter.addEventListener('change', filterRecords);
-                viewAllBtn.addEventListener('click', viewAllRecords);
-                prevPageBtn.addEventListener('click', goToPrevPage);
-                nextPageBtn.addEventListener('click', goToNextPage);
-                
-                // Event listeners para fecha con formato DD/MM/AAAA
-                dictamenDateInput.addEventListener('input', function(e) {
-                    applyDateMask(e.target);
-                });
-                
-                // Validar fecha al perder el foco
-                dictamenDateInput.addEventListener('blur', function(e) {
-                    validateDateField(e.target);
-                });
-                
-                // Event listeners para firma defensor
-                firmaDefensorNo.addEventListener('change', function() {
-                    if (this.checked) {
-                        subroganteField.classList.add('active');
-                        firmaDefensorSubroganteInput.focus();
-                    }
-                });
-                
-                firmaDefensorSi.addEventListener('change', function() {
-                    if (this.checked) {
-                        subroganteField.classList.remove('active');
-                        firmaDefensorSubroganteInput.value = '';
-                    }
-                });
-                
-                // Event listeners para contenido con paginación
-                contentTextarea.addEventListener('input', updateWordCount);
-                clearContent.addEventListener('click', clearContentText);
-                prevPageContent.addEventListener('click', goToPrevContentPage);
-                nextPageContent.addEventListener('click', goToNextContentPage);
-                
-                closeButtons.forEach(button => {
-                    button.addEventListener('click', function() {
-                        recordModal.style.display = 'none';
-                        contentModal.style.display = 'none';
-                    });
-                });
-                
-                // Cerrar modal al hacer clic fuera del contenido
-                window.addEventListener('click', function(event) {
-                    if (event.target === recordModal) {
-                        recordModal.style.display = 'none';
-                    }
-                    if (event.target === contentModal) {
-                        contentModal.style.display = 'none';
-                    }
-                });
-            }
-            
-            // Aplicar máscara para fecha DD/MM/AAAA
-            function applyDateMask(input) {
-                let value = input.value.replace(/\D/g, '');
-                
-                if (value.length > 8) {
-                    value = value.slice(0, 8);
-                }
-                
-                if (value.length >= 2) {
-                    value = value.slice(0, 2) + '/' + value.slice(2);
-                }
-                if (value.length >= 5) {
-                    value = value.slice(0, 5) + '/' + value.slice(5);
-                }
-                
-                input.value = value;
-                
-                if (value.length === 10 && isValidDate(value)) {
-                    input.style.borderColor = 'var(--success-color)';
-                } else if (value.length > 0) {
-                    input.style.borderColor = 'var(--danger-color)';
+        // ============================================================
+        // OPERACIONES CRUD
+        // ============================================================
+        async function saveRecord(data, id = null) {
+            if (firebaseReady) {
+                if (id) {
+                    await db.collection('dictamenes').doc(id).update(data);
                 } else {
-                    input.style.borderColor = 'var(--border-color)';
+                    const ref = await db.collection('dictamenes').add(data);
+                    return ref.id;
                 }
+            } else {
+                if (id) {
+                    const idx = allRecords.findIndex(r => r.id === id);
+                    if (idx !== -1) allRecords[idx] = { ...allRecords[idx], ...data };
+                } else {
+                    const newId = Date.now().toString();
+                    data.id = newId;
+                    allRecords.push(data);
+                }
+                try { localStorage.setItem('dictamenes_local', JSON.stringify(allRecords)); } catch (e) {}
             }
-            
-            // Validar campo de fecha
-            function validateDateField(input) {
-                if (input.value && !isValidDate(input.value)) {
-                    input.style.borderColor = 'var(--danger-color)';
-                    return false;
+        }
+
+        // ============================================================
+        // CARGA DE DATOS Y LISTENERS
+        // ============================================================
+        function loadFromFirestore() {
+            if (!firebaseReady) {
+                loadLocalFallback();
+                return;
+            }
+
+            try {
+                firestoreUnsubscribe = db.collection('dictamenes')
+                    .orderBy('number', 'desc')
+                    .onSnapshot(snapshot => {
+                        allRecords = [];
+                        snapshot.forEach(doc => {
+                            const d = doc.data();
+                            d.id = doc.id;
+                            if (!d.createdAt) {
+                                d.createdAt = d.updatedAt || d.dictamenDate || null;
+                            }
+                            allRecords.push(d);
+                        });
+                        const migracionHecha = localStorage.getItem('migracion_hecha') === 'true';
+                        if (!migracionHecha && allRecords.length > 0) {
+                            migrationBanner.classList.remove('hidden');
+                        } else {
+                            migrationBanner.classList.add('hidden');
+                        }
+                        applyFiltersAndRender();
+                        updateStatsAndMonths();
+                        populateYearFilter();
+                    }, err => {
+                        console.error('Error en snapshot de Firestore:', err);
+                        toast('Error al leer datos de Firestore. Cambiando a modo local.', 'error');
+                        firebaseReady = false;
+                        loadLocalFallback();
+                    });
+            } catch (e) {
+                console.error('Error al configurar listener:', e);
+                toast('Error de conexión con Firestore. Modo local.', 'error');
+                firebaseReady = false;
+                loadLocalFallback();
+            }
+        }
+
+        function loadLocalFallback() {
+            try {
+                const stored = localStorage.getItem('dictamenes_local');
+                if (stored) {
+                    allRecords = JSON.parse(stored);
+                    allRecords = allRecords.filter(r => r.id);
+                } else {
+                    allRecords = [];
+                }
+            } catch (e) { allRecords = []; }
+            applyFiltersAndRender();
+            updateStatsAndMonths();
+            populateYearFilter();
+        }
+
+        function initApp() {
+            if (firebaseReady) {
+                loadFromFirestore();
+            } else {
+                loadLocalFallback();
+            }
+            setupEventListeners();
+            runMigrationBtn.addEventListener('click', runMigration);
+        }
+
+        // ============================================================
+        // FILTROS Y RENDER
+        // ============================================================
+        function applyFiltersAndRender() {
+            const q = search.value.trim().toLowerCase();
+            const year = filterYear.value;
+            const month = filterMonth.value;
+            const topic = filterTopic.value;
+
+            filtered = allRecords.filter(r => {
+                if (year !== 'todos' && r.year !== year) return false;
+                if (month !== 'todos') {
+                    const m = getMonthFromDate(r.dictamenDate);
+                    if (m !== parseInt(month, 10)) return false;
+                }
+                if (topic !== 'todos' && r.topic !== topic) return false;
+                if (q) {
+                    const searchable =
+                        `${r.number} ${r.year} ${r.subject} ${r.topic} ${r.assignedUser} ${r.expediente} ${r.content} ${r.firmaDefensor} ${r.firmaDefensorSubrogante} ${formatDateDisplay(r.dictamenDate)}`
+                        .toLowerCase();
+                    return searchable.includes(q);
                 }
                 return true;
-            }
-            
-            // Actualizar contador de palabras
-            function updateWordCount() {
-                const text = contentTextarea.value;
-                const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
-                wordCount.textContent = `${words} palabras`;
-            }
-            
-            // Actualizar paginación de contenido
-            function updateContentPagination() {
-                const totalPages = contentPages.length;
-                pageInfoContent.textContent = `Página ${currentContentPage} de ${totalPages}`;
+            });
 
-                contentTextarea.value = contentPages[currentContentPage - 1] || '';
+            filtered.sort((a, b) => b.number - a.number);
+            currentPage = 1;
+            renderTable();
+            updateStatsAndMonths();
+        }
 
-                prevPageContent.disabled = currentContentPage === 1;
-                nextPageContent.disabled = currentContentPage === totalPages || totalPages === 0;
+        function renderTable() {
+            const start = (currentPage - 1) * perPage;
+            const pageItems = filtered.slice(start, start + perPage);
+
+            if (filtered.length === 0) {
+                body.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                emptyBtn.onclick = () => openForm();
+            } else {
+                emptyState.classList.add('hidden');
+                let html = '';
+                pageItems.forEach(r => {
+                    const firmaText = r.firmaDefensor === 'No' && r.firmaDefensorSubrogante ? 'Subrogante' : (r.firmaDefensor ||
+                        'Sí');
+                    const firmaCls = r.firmaDefensor === 'No' ? (r.firmaDefensorSubrogante ? 'firma-subrogante' :
+                        'firma-no') : 'firma-si';
+                    const hasText = r.content && r.content.trim().length > 0;
+                    const created = formatTimestamp(r.createdAt);
+                    html += `
+                        <tr>
+                            <td><strong>${r.number}</strong></td>
+                            <td><span class="year-badge">${r.year}</span></td>
+                            <td>${r.subject || ''}</td>
+                            <td>${formatDateDisplay(r.dictamenDate)}</td>
+                            <td><span class="topic-badge">${r.topic || ''}</span></td>
+                            <td>${r.assignedUser ? `<span class="user-badge">${r.assignedUser}</span>` : ''}</td>
+                            <td><span class="firma-badge ${firmaCls}">${firmaText}</span></td>
+                            <td><strong>${r.expediente || ''}</strong></td>
+                            <td><span class="text-badge ${hasText ? 'text-yes' : 'text-no'}">${hasText ? 'Sí' : 'No'}</span></td>
+                            <td><span class="time-badge">${created}</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn btn-view" data-action="view" data-id="${r.id}"><i class="fas fa-eye"></i> Ver</button>
+                                    <button class="action-btn btn-edit" data-action="edit" data-id="${r.id}"><i class="fas fa-pen"></i> Editar</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                body.innerHTML = html;
             }
-            
-            // Ir a página anterior de contenido
-            function goToPrevContentPage() {
-                if (currentContentPage > 1) {
-                    contentPages[currentContentPage - 1] = contentTextarea.value;
-                    currentContentPage--;
-                    updateContentPagination();
-                }
-            }
-            
-            // Ir a página siguiente de contenido
-            function goToNextContentPage() {
-                if (currentContentPage < contentPages.length) {
-                    contentPages[currentContentPage - 1] = contentTextarea.value;
-                    currentContentPage++;
-                    updateContentPagination();
-                }
-            }
-            
-            // Limpiar contenido
-            function clearContentText() {
-                if (confirm('¿Está seguro de que desea limpiar todo el contenido?')) {
-                    contentTextarea.value = '';
-                    updateWordCount();
-                    contentPages = [''];
-                    currentContentPage = 1;
-                    updateContentPagination();
-                }
-            }
-            
-            // Obtener todo el contenido uniendo páginas
-            function getFullContent() {
-                if (contentPages.length === 0) {
-                    contentPages = [contentTextarea.value];
+
+            document.querySelectorAll('[data-action="view"]').forEach(b => b.onclick = () => viewRecord(b.dataset.id));
+            document.querySelectorAll('[data-action="edit"]').forEach(b => b.onclick = () => openForm(b.dataset.id));
+
+            const totalPages = Math.ceil(filtered.length / perPage) || 1;
+            pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
+            prevPage.disabled = currentPage === 1;
+            nextPage.disabled = currentPage === totalPages;
+        }
+
+        // ============================================================
+        // KPIs: TRIMESTRES Y MESES (igual que index (1))
+        // ============================================================
+        function updateStatsAndMonths() {
+            const list = filtered.length > 0 ? filtered : allRecords;
+            statTotal.textContent = list.length;
+
+            let t1 = 0, t2 = 0, t3 = 0, t4 = 0;
+            const monthCounts = Array(12).fill(0);
+            const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
+            list.forEach(r => {
+                const m = getMonthFromDate(r.dictamenDate);
+                if (m >= 1 && m <= 12) monthCounts[m - 1]++;
+                if (m >= 1 && m <= 3) t1++;
+                else if (m >= 4 && m <= 6) t2++;
+                else if (m >= 7 && m <= 9) t3++;
+                else if (m >= 10 && m <= 12) t4++;
+            });
+
+            statTrim1.textContent = t1;
+            statTrim2.textContent = t2;
+            statTrim3.textContent = t3;
+            statTrim4.textContent = t4;
+
+            // Grid mensual
+            monthlyStatsGrid.innerHTML = '';
+            monthCounts.forEach((count, index) => {
+                const item = document.createElement('div');
+                item.className = 'month-stat-item';
+                item.innerHTML = `
+                    <span class="month-stat-value">${count}</span>
+                    <span class="month-stat-label">${monthNames[index]}</span>
+                `;
+                monthlyStatsGrid.appendChild(item);
+            });
+
+            // Mostrar/ocultar según haya datos
+            const hasData = monthCounts.some(c => c > 0);
+            monthlyStats.style.display = hasData ? 'block' : 'none';
+        }
+
+        function populateYearFilter() {
+            const years = new Set();
+            allRecords.forEach(r => years.add(r.year));
+            const current = new Date().getFullYear();
+            for (let y = current - 5; y <= current + 5; y++) years.add(y.toString());
+            const sorted = Array.from(years).sort((a, b) => b - a);
+            filterYear.innerHTML = '<option value="todos">Año</option>' + sorted.map(y => `<option value="${y}">${y}</option>`).join(
+                '');
+        }
+
+        // ============================================================
+        // FORMULARIO
+        // ============================================================
+        function openForm(id = null) {
+            editingId = id;
+            formModal.style.display = 'flex';
+            formTitle.textContent = id ? 'Editar Dictamen' : 'Nuevo Dictamen';
+            submitText.textContent = id ? 'Actualizar' : 'Guardar';
+            editId.value = id || '';
+            createdAtGroup.style.display = 'none';
+
+            if (id) {
+                const r = allRecords.find(rec => rec.id === id);
+                if (!r) { toast('Registro no encontrado', 'error'); return; }
+                fSubject.value = r.subject || '';
+                fDate.value = formatDateDisplay(r.dictamenDate);
+                fTopic.value = r.topic || '';
+                fUser.value = r.assignedUser || '';
+                fExpediente.value = r.expediente || '';
+                fContent.value = r.content || '';
+                if (r.firmaDefensor === 'No') {
+                    document.querySelector('input[name="firma"][value="No"]').checked = true;
+                    subroganteField.classList.add('active');
+                    fSubrogante.value = r.firmaDefensorSubrogante || '';
                 } else {
-                    contentPages[currentContentPage - 1] = contentTextarea.value;
+                    document.querySelector('input[name="firma"][value="Sí"]').checked = true;
+                    subroganteField.classList.remove('active');
+                    fSubrogante.value = '';
                 }
-                return contentPages.join('');
-            }
-            
-            // Actualizar filtro de años
-            function updateYearFilter() {
-                const years = new Set();
-                
-                for (let year = startYear; year <= currentYear + 5; year++) {
-                    years.add(year.toString());
+                if (r.createdAt) {
+                    createdAtGroup.style.display = 'block';
+                    fCreatedAt.textContent = formatTimestamp(r.createdAt);
                 }
-                
-                records.forEach(record => {
-                    if (record.year) {
-                        years.add(record.year.toString());
-                    }
-                });
-                
-                const sortedYears = Array.from(years).sort((a, b) => b - a);
-                
-                yearFilter.innerHTML = '<option value="todos">Todos</option>';
-                sortedYears.forEach(year => {
-                    const option = document.createElement('option');
-                    option.value = year;
-                    option.textContent = year;
-                    yearFilter.appendChild(option);
-                });
-            }
-            
-            // Actualizar estadísticas principales
-            function updateStats() {
-                totalRecords.textContent = records.length;
-            }
-            
-            // Actualizar estadísticas por trimestre, considerando todos los filtros activos
-            function updateTrimestreStats() {
-                // Obtener valores de filtros
-                const searchText = searchInput.value.trim();
-                const selectedYear = yearFilter.value;
-                const selectedMonth = monthFilter.value;
-                const selectedTopic = topicFilter.value;
-                
-                // Determinar si hay filtros activos
-                const hasActiveFilter = searchText || selectedYear !== 'todos' || selectedMonth !== 'todos' || selectedTopic !== 'todos';
-                
-                // Elegir conjunto de registros a analizar
-                const recordsToCheck = hasActiveFilter ? filteredRecords : records;
-                
-                let trim1 = 0, trim2 = 0, trim3 = 0, trim4 = 0;
-                
-                recordsToCheck.forEach(record => {
-                    const month = getMonthFromDate(record.dictamenDate);
-                    
-                    if (month >= 1 && month <= 3) {
-                        trim1++;
-                    } else if (month >= 4 && month <= 6) {
-                        trim2++;
-                    } else if (month >= 7 && month <= 9) {
-                        trim3++;
-                    } else if (month >= 10 && month <= 12) {
-                        trim4++;
-                    }
-                });
-                
-                trimestre1.textContent = trim1;
-                trimestre2.textContent = trim2;
-                trimestre3.textContent = trim3;
-                trimestre4.textContent = trim4;
-            }
-            
-            // Actualizar estadísticas mensuales, considerando todos los filtros activos
-            function updateMonthlyStats() {
-                monthlyStatsGrid.innerHTML = '';
-                
-                // Obtener valores de filtros
-                const searchText = searchInput.value.trim();
-                const selectedYear = yearFilter.value;
-                const selectedMonth = monthFilter.value;
-                const selectedTopic = topicFilter.value;
-                
-                // Determinar si hay filtros activos
-                const hasActiveFilter = searchText || selectedYear !== 'todos' || selectedMonth !== 'todos' || selectedTopic !== 'todos';
-                
-                // Elegir conjunto de registros a analizar
-                const recordsToCheck = hasActiveFilter ? filteredRecords : records;
-                
-                // Inicializar contadores para cada mes
-                const monthCounts = Array(12).fill(0);
-                
-                recordsToCheck.forEach(record => {
-                    const month = getMonthFromDate(record.dictamenDate);
-                    if (month >= 1 && month <= 12) {
-                        monthCounts[month - 1]++;
-                    }
-                });
-                
-                // Crear elementos para cada mes
-                monthCounts.forEach((count, index) => {
-                    const monthStatItem = document.createElement('div');
-                    monthStatItem.className = 'month-stat-item';
-                    
-                    monthStatItem.innerHTML = `
-                        <span class="month-stat-value">${count}</span>
-                        <span class="month-stat-label">${monthNames[index]}</span>
-                    `;
-                    
-                    monthlyStatsGrid.appendChild(monthStatItem);
-                });
-                
-                // Mostrar u ocultar la sección de estadísticas mensuales
-                const hasData = monthCounts.some(count => count > 0);
-                monthlyStats.style.display = hasData ? 'block' : 'none';
-            }
-            
-            // Renderizar la tabla de registros
-            function renderTable() {
-                recordsBody.innerHTML = '';
-                
-                // Determinar qué registros mostrar
-                const searchText = searchInput.value.trim();
-                const selectedYear = yearFilter.value;
-                const selectedMonth = monthFilter.value;
-                const selectedTopic = topicFilter.value;
-                const hasActiveFilter = searchText || selectedYear !== 'todos' || selectedMonth !== 'todos' || selectedTopic !== 'todos';
-                
-                const recordsToRender = hasActiveFilter ? filteredRecords : records;
-                
-                if (recordsToRender.length === 0) {
-                    emptyState.style.display = 'block';
-                    updatePagination(0);
-                    return;
-                }
-                
-                emptyState.style.display = 'none';
-                
-                const totalPages = Math.ceil(recordsToRender.length / recordsPerPage);
-                
-                if (currentPage > totalPages) {
-                    currentPage = totalPages > 0 ? totalPages : 1;
-                }
-                
-                updatePagination(recordsToRender.length);
-                
-                const startIndex = (currentPage - 1) * recordsPerPage;
-                const endIndex = startIndex + recordsPerPage;
-                const paginatedRecords = recordsToRender.slice(startIndex, endIndex);
-                
-                paginatedRecords.forEach(record => {
-                    const row = document.createElement('tr');
-                    
-                    let registroDisplay = 'No disponible';
-                    if (record.createdAt) {
-                        registroDisplay = formatDateTimeArgentina(record.createdAt);
-                    }
-                    
-                    const hasText = record.content && record.content.trim() !== '';
-                    
-                    // Determinar texto para firma defensor
-                    let firmaDisplay = record.firmaDefensor || 'Sí';
-                    let firmaClass = 'firma-si';
-                    
-                    if (record.firmaDefensor === 'No') {
-                        firmaDisplay = record.firmaDefensorSubrogante ? 'Subrogante' : 'No';
-                        firmaClass = record.firmaDefensorSubrogante ? 'firma-subrogante' : 'firma-no';
-                    }
-                    
-                    row.innerHTML = `
-                        <td>${record.number}</td>
-                        <td><span class="year-badge">${record.year}</span></td>
-                        <td>${record.subject}</td>
-                        <td>${formatDateForDisplay(record.dictamenDate)}</td>
-                        <td><span class="topic-badge">${record.topic || 'Sin especificar'}</span></td>
-                        <td>${record.assignedUser ? `<span class="user-badge">${record.assignedUser}</span>` : 'No asignado'}</td>
-                        <td><span class="firma-badge ${firmaClass}">${firmaDisplay}</span></td>
-                        <td><span class="expediente-bold">${record.expediente || 'No especificado'}</span></td>
-                        <td>
-                            <span class="text-badge ${hasText ? 'text-yes' : 'text-no'}">
-                                ${hasText ? 'Sí' : 'No'}
-                            </span>
-                        </td>
-                        <td>
-                            <span class="time-badge">${registroDisplay}</span>
-                        </td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="action-btn btn-view view-content" data-id="${record.id}">
-                                    <i class="fas fa-eye"></i> Ver
-                                </button>
-                                <button class="action-btn btn-edit edit-record" data-id="${record.id}">
-                                    <i class="fas fa-edit"></i> Editar
-                                </button>
-                            </div>
-                        </td>
-                    `;
-                    
-                    recordsBody.appendChild(row);
-                });
-                
-                // Agregar event listeners a los botones de acción
-                document.querySelectorAll('.view-content').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const id = this.getAttribute('data-id');
-                        viewContent(id);
-                    });
-                });
-                
-                document.querySelectorAll('.edit-record').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const id = this.getAttribute('data-id');
-                        editRecord(id);
-                    });
-                });
-            }
-            
-            // Actualizar paginación
-            function updatePagination(totalRecords) {
-                const totalPages = Math.ceil(totalRecords / recordsPerPage);
-                pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
-                
-                prevPageBtn.disabled = currentPage === 1;
-                nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
-            }
-            
-            // Ir a la página anterior
-            function goToPrevPage() {
-                if (currentPage > 1) {
-                    currentPage--;
-                    renderTable();
-                }
-            }
-            
-            // Ir a la página siguiente
-            function goToNextPage() {
-                const searchText = searchInput.value.trim();
-                const selectedYear = yearFilter.value;
-                const selectedMonth = monthFilter.value;
-                const selectedTopic = topicFilter.value;
-                const hasActiveFilter = searchText || selectedYear !== 'todos' || selectedMonth !== 'todos' || selectedTopic !== 'todos';
-                const recordsToRender = hasActiveFilter ? filteredRecords : records;
-                const totalPages = Math.ceil(recordsToRender.length / recordsPerPage);
-                
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    renderTable();
-                }
-            }
-            
-            // Abrir modal para nuevo registro
-            function openNewRecordModal() {
-                editingId = null;
-                document.getElementById('modalTitle').textContent = 'Nuevo Dictamen';
-                recordForm.reset();
-                
+            } else {
+                fSubject.value = '';
                 const today = new Date();
-                const day = String(today.getDate()).padStart(2, '0');
-                const month = String(today.getMonth() + 1).padStart(2, '0');
-                const year = today.getFullYear();
-                dictamenDateInput.value = `${day}/${month}/${year}`;
-                dictamenDateInput.style.borderColor = 'var(--success-color)';
-                
-                topicSelect.value = '';
-                assignedUserSelect.value = '';
-                
-                // Por defecto, firma defensor "Sí" seleccionada
-                firmaDefensorSi.checked = true;
-                firmaDefensorNo.checked = false;
+                fDate.value =
+                    `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
+                fTopic.value = '';
+                fUser.value = '';
+                fExpediente.value = '';
+                fContent.value = '';
+                document.querySelector('input[name="firma"][value="Sí"]').checked = true;
                 subroganteField.classList.remove('active');
-                firmaDefensorSubroganteInput.value = '';
-                
-                expedienteInput.value = '';
-                
-                createdAtContainer.style.display = 'none';
-                
-                contentTextarea.value = '';
-                updateWordCount();
-                contentPages = [];
-                currentContentPage = 1;
-                updateContentPagination();
-                
-                recordModal.style.display = 'flex';
+                fSubrogante.value = '';
             }
-            
-            // Cerrar modal
-            function closeModal() {
-                recordModal.style.display = 'none';
+            updateWordCount();
+        }
+
+        function closeFormModal() {
+            formModal.style.display = 'none';
+            editingId = null;
+        }
+
+        function updateWordCount() {
+            const text = fContent.value.trim();
+            const words = text ? text.split(/\s+/).length : 0;
+            wordCount.textContent = `${words} palabras`;
+        }
+
+        // ============================================================
+        // VISTA DE CONTENIDO
+        // ============================================================
+        function viewRecord(id) {
+            const r = allRecords.find(rec => rec.id === id);
+            if (!r) return toast('Registro no encontrado', 'error');
+            let firmaHtml = '';
+            if (r.firmaDefensor === 'No' && r.firmaDefensorSubrogante) {
+                firmaHtml =
+                    `<p><strong>Firma Titular:</strong> No</p><p><strong>Subrogante:</strong> ${r.firmaDefensorSubrogante}</p>`;
+            } else {
+                firmaHtml = `<p><strong>Firma Titular:</strong> ${r.firmaDefensor || 'Sí'}</p>`;
             }
-            
-            // Guardar registro (nuevo o editado) - VALIDACIÓN MEJORADA
-            async function saveRecord(e) {
-                e.preventDefault();
-                
-                // Obtener valores del formulario
-                const subject = subjectInput.value.trim();
-                const dictamenDate = dictamenDateInput.value.trim();
-                const topic = topicSelect.value;
-                const assignedUser = assignedUserSelect.value;
-                const expediente = expedienteInput.value.trim();
-                const content = getFullContent().trim();
-                
-                // Validar radio de firma defensor (siempre uno debe estar seleccionado)
-                const firmaDefensorSelected = document.querySelector('input[name="firmaDefensor"]:checked');
-                const firmaDefensor = firmaDefensorSelected ? firmaDefensorSelected.value : '';
-                
-                // Validar subrogante si firma es "No"
-                let firmaDefensorSubrogante = '';
-                if (firmaDefensor === 'No') {
-                    firmaDefensorSubrogante = firmaDefensorSubroganteInput.value.trim();
-                }
-                
-                // --- VALIDACIONES ---
-                // 1. Campos obligatorios del HTML (marcados con required)
-                if (!subject) {
-                    showNotification("El campo 'Asunto' es obligatorio.", "error");
-                    subjectInput.focus();
-                    return;
-                }
-                if (!dictamenDate) {
-                    showNotification("El campo 'Fecha de Dictamen' es obligatorio.", "error");
-                    dictamenDateInput.focus();
-                    return;
-                }
-                if (!topic) {
-                    showNotification("Debe seleccionar una 'Temática'.", "error");
-                    topicSelect.focus();
-                    return;
-                }
-                if (!assignedUser) {
-                    showNotification("Debe seleccionar un 'Usuario asignado'.", "error");
-                    assignedUserSelect.focus();
-                    return;
-                }
-                if (!expediente) {
-                    showNotification("El campo 'Expediente' es obligatorio.", "error");
-                    expedienteInput.focus();
-                    return;
-                }
-                if (!content) {
-                    showNotification("El 'Contenido del Dictamen' no puede estar vacío.", "error");
-                    contentTextarea.focus();
-                    return;
-                }
-                
-                // 2. Validar formato de fecha
-                if (!isValidDate(dictamenDate)) {
-                    showNotification("La fecha debe tener el formato DD/MM/AAAA y ser válida.", "error");
-                    dictamenDateInput.focus();
-                    return;
-                }
-                
-                // 3. Si firma es "No", el subrogante es obligatorio
-                if (firmaDefensor === 'No' && !firmaDefensorSubrogante) {
-                    showNotification("Cuando la firma es 'No', debe indicar el nombre del Defensor Subrogante.", "error");
-                    firmaDefensorSubroganteInput.focus();
-                    return;
-                }
-                
-                // Si todas las validaciones pasan, proceder a guardar
-                saveBtnText.style.display = 'none';
-                saveBtnSpinner.style.display = 'inline-block';
-                saveBtn.disabled = true;
-                
-                const year = getYearFromDate(dictamenDate);
-                
-                try {
-                    if (editingId === null) {
-                        // --- NUEVO REGISTRO ---
-                        const nextNumber = await getNextNumberAtomic(year);
-                        const createdAt = getCurrentTimestampArgentina();
-                        
-                        const newRecord = {
-                            number: nextNumber,
-                            year: year,
-                            subject,
-                            dictamenDate: formatDateForStorage(dictamenDate),
-                            topic,
-                            assignedUser,
-                            firmaDefensor,
-                            firmaDefensorSubrogante,
-                            expediente,
-                            content,
-                            createdAt: createdAt
-                        };
-                        
-                        if (firebaseInitialized) {
-                            await db.collection("dictamenes").add(newRecord);
-                            showNotification("Dictamen creado correctamente", "success");
-                        } else {
-                            newRecord.id = Date.now().toString();
-                            records.push(newRecord);
-                            saveRecordsToLocalStorage();
-                            showNotification("Dictamen creado correctamente (modo local)", "success");
-                            // Actualizar vista local
-                            updateYearFilter();
-                            updateStats();
-                            filterRecords();
-                        }
-                    } else {
-                        // --- EDICIÓN ---
-                        if (firebaseInitialized) {
-                            const recordRef = db.collection("dictamenes").doc(editingId);
-                            const existingRecord = await recordRef.get();
-                            
-                            if (existingRecord.exists) {
-                                const data = existingRecord.data();
-                                let updateData = {
-                                    subject,
-                                    dictamenDate: formatDateForStorage(dictamenDate),
-                                    topic,
-                                    assignedUser,
-                                    firmaDefensor,
-                                    firmaDefensorSubrogante,
-                                    expediente,
-                                    content,
-                                    updatedAt: getCurrentTimestampArgentina()
-                                };
-                                
-                                // Si el año cambió, obtener nuevo número
-                                if (String(year) !== String(data.year)) {
-                                    const nextNumber = await getNextNumberAtomic(year);
-                                    updateData.number = nextNumber;
-                                    updateData.year = year;
-                                } else {
-                                    // Mantener el número y año originales
-                                    updateData.number = data.number;
-                                    updateData.year = data.year;
-                                }
-                                
-                                await recordRef.update(updateData);
-                                showNotification("Dictamen actualizado correctamente", "success");
-                            } else {
-                                showNotification("El registro que intenta editar ya no existe.", "error");
-                                closeModal();
-                                return;
-                            }
-                        } else {
-                            // Modo local
-                            const index = records.findIndex(record => record.id === editingId);
-                            
-                            if (index !== -1) {
-                                const data = records[index];
-                                let updateData = {
-                                    subject,
-                                    dictamenDate: formatDateForStorage(dictamenDate),
-                                    topic,
-                                    assignedUser,
-                                    firmaDefensor,
-                                    firmaDefensorSubrogante,
-                                    expediente,
-                                    content,
-                                    updatedAt: new Date().toISOString()
-                                };
-                                
-                                if (String(year) !== String(data.year)) {
-                                    const nextNumber = await getNextNumberAtomic(year);
-                                    updateData.number = nextNumber;
-                                    updateData.year = year;
-                                } else {
-                                    updateData.number = data.number;
-                                    updateData.year = data.year;
-                                }
-                                
-                                records[index] = { ...records[index], ...updateData };
-                                saveRecordsToLocalStorage();
-                                showNotification("Dictamen actualizado correctamente (modo local)", "success");
-                                // Actualizar vista local
-                                updateYearFilter();
-                                updateStats();
-                                filterRecords();
-                            } else {
-                                showNotification("El registro que intenta editar no se encontró en modo local.", "error");
-                                closeModal();
-                                return;
-                            }
-                        }
-                    }
-                    
-                    // Cerrar modal y resetear formulario
-                    closeModal();
-                    recordForm.reset();
-                    
-                } catch (error) {
-                    console.error("Error guardando el registro:", error);
-                    showNotification("Error al guardar el registro. Por favor, intenta nuevamente.", "error");
-                } finally {
-                    saveBtnText.style.display = 'inline-block';
-                    saveBtnSpinner.style.display = 'none';
-                    saveBtn.disabled = false;
-                    // Limpiar editingId después de guardar (éxito o error)
-                    editingId = null;
-                }
-            }
-            
-            // Ver contenido completo de un dictamen
-            function viewContent(id) {
-                const record = records.find(record => record.id === id);
-                
-                if (record) {
-                    document.getElementById('contentNumber').textContent = `${record.number}/${record.year}`;
-                    document.getElementById('contentSubject').textContent = record.subject;
-                    document.getElementById('contentDictamenDate').textContent = formatDateForDisplay(record.dictamenDate);
-                    document.getElementById('contentTopic').textContent = record.topic || 'Sin especificar';
-                    document.getElementById('contentAssignedUser').textContent = record.assignedUser || 'No asignado';
-                    document.getElementById('contentExpediente').textContent = record.expediente || 'No especificado';
-                    
-                    let registroDisplay = 'No disponible';
-                    if (record.createdAt) {
-                        registroDisplay = formatDateTimeArgentina(record.createdAt);
-                    }
-                    document.getElementById('contentCreatedAt').textContent = registroDisplay;
-                    
-                    // Mostrar solo la firma seleccionada
-                    const firmaContainer = document.getElementById('firmaContainer');
-                    firmaContainer.innerHTML = '';
-                    
-                    if (record.firmaDefensor === 'No' && record.firmaDefensorSubrogante) {
-                        firmaContainer.innerHTML = `
-                            <p><strong>Firma Defensor Titular:</strong> No</p>
-                            <p><strong>Firma Defensor Subrogante:</strong> ${record.firmaDefensorSubrogante}</p>
-                        `;
-                    } else if (record.firmaDefensor) {
-                        firmaContainer.innerHTML = `<p><strong>Firma Defensor Titular:</strong> ${record.firmaDefensor}</p>`;
-                    }
-                    
-                    const formattedContent = record.content ? record.content.replace(/\n/g, '<br>') : '';
-                    document.getElementById('fullContent').innerHTML = formattedContent;
-                    
-                    contentModal.style.display = 'flex';
-                }
-            }
-            
-            // Editar un registro existente
-            function editRecord(id) {
-                const record = records.find(record => record.id === id);
-                
-                if (record) {
-                    editingId = id;
-                    document.getElementById('modalTitle').textContent = 'Editar Dictamen';
-                    document.getElementById('recordId').value = record.id;
-                    subjectInput.value = record.subject;
-                    
-                    dictamenDateInput.value = formatDateForDisplay(record.dictamenDate);
-                    dictamenDateInput.style.borderColor = 'var(--success-color)';
-                    
-                    topicSelect.value = record.topic || '';
-                    assignedUserSelect.value = record.assignedUser || '';
-                    expedienteInput.value = record.expediente || '';
-                    
-                    // Configurar firma según lo almacenado
-                    if (record.firmaDefensor === 'No') {
-                        firmaDefensorNo.checked = true;
-                        firmaDefensorSi.checked = false;
-                        subroganteField.classList.add('active');
-                        firmaDefensorSubroganteInput.value = record.firmaDefensorSubrogante || '';
-                    } else {
-                        firmaDefensorSi.checked = true;
-                        firmaDefensorNo.checked = false;
+            viewTitle.textContent = `Dictamen ${r.number}/${r.year}`;
+            viewContent.innerHTML = `
+                <p><strong>Asunto:</strong> ${r.subject}</p>
+                <p><strong>Fecha:</strong> ${formatDateDisplay(r.dictamenDate)}</p>
+                <p><strong>Temática:</strong> ${r.topic}</p>
+                <p><strong>Usuario:</strong> ${r.assignedUser}</p>
+                ${firmaHtml}
+                <p><strong>Expediente:</strong> ${r.expediente}</p>
+                <p><strong>Registrado:</strong> ${formatTimestamp(r.createdAt)}</p>
+                <hr style="margin:16px 0; border-color:#e2e8f0;" />
+                <div class="full-text" style="background:#f8fafc;padding:16px;border-radius:12px;white-space:pre-wrap;word-break:break-word;max-height:400px;overflow-y:auto;border:1px solid #e2e8f0;">${r.content || ''}</div>
+            `;
+            viewModal.style.display = 'flex';
+        }
+
+        // ============================================================
+        // EVENTOS
+        // ============================================================
+        function setupEventListeners() {
+            btnNew.addEventListener('click', () => openForm());
+            emptyBtn.addEventListener('click', () => openForm());
+
+            cancelForm.addEventListener('click', closeFormModal);
+            closeForm.addEventListener('click', closeFormModal);
+            formModal.addEventListener('click', function(e) { if (e.target === this) closeFormModal(); });
+
+            closeView.addEventListener('click', () => viewModal.style.display = 'none');
+            viewModal.addEventListener('click', function(e) { if (e.target === this) viewModal.style.display = 'none'; });
+
+            prevPage.addEventListener('click', () => { if (currentPage > 1) { currentPage--;
+                    renderTable(); } });
+            nextPage.addEventListener('click', () => { const total = Math.ceil(filtered.length / perPage); if (currentPage < total) {
+                    currentPage++;
+                    renderTable(); } });
+
+            [search, filterYear, filterMonth, filterTopic].forEach(el => {
+                el.addEventListener('input', applyFiltersAndRender);
+                el.addEventListener('change', applyFiltersAndRender);
+            });
+
+            // Máscara fecha
+            fDate.addEventListener('input', function(e) {
+                let v = this.value.replace(/\D/g, '');
+                if (v.length > 2) v = v.slice(0, 2) + '/' + v.slice(2);
+                if (v.length > 5) v = v.slice(0, 5) + '/' + v.slice(5);
+                this.value = v;
+            });
+
+            firmaRadios.forEach(r => {
+                r.addEventListener('change', function() {
+                    if (this.value === 'No') subroganteField.classList.add('active');
+                    else {
                         subroganteField.classList.remove('active');
-                        firmaDefensorSubroganteInput.value = '';
+                        fSubrogante.value = '';
                     }
-                    
-                    if (record.createdAt) {
-                        createdAtContainer.style.display = 'block';
-                        createdAtDisplay.textContent = formatDateTimeArgentina(record.createdAt);
+                });
+            });
+
+            fContent.addEventListener('input', updateWordCount);
+            clearContentBtn.addEventListener('click', () => { fContent.value = '';
+                updateWordCount(); });
+
+            // Submit
+            document.getElementById('dictamenForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const subject = fSubject.value.trim();
+                const dateStr = fDate.value.trim();
+                const topic = fTopic.value;
+                const user = fUser.value;
+                const expediente = fExpediente.value.trim();
+                const content = fContent.value.trim();
+
+                if (!subject) return toast('Asunto es obligatorio', 'error');
+                if (!isValidDate(dateStr)) return toast('Fecha inválida (DD/MM/AAAA)', 'error');
+                if (!topic) return toast('Seleccione una temática', 'error');
+                if (!user) return toast('Seleccione un usuario', 'error');
+                if (!expediente) return toast('Expediente es obligatorio', 'error');
+                if (!content) return toast('El contenido no puede estar vacío', 'error');
+
+                const firma = document.querySelector('input[name="firma"]:checked');
+                if (!firma) return toast('Seleccione firma defensor', 'error');
+                const firmaVal = firma.value;
+                let subrogante = '';
+                if (firmaVal === 'No') {
+                    subrogante = fSubrogante.value.trim();
+                    if (!subrogante) return toast('Indique el nombre del subrogante', 'error');
+                }
+
+                showSpinner(true);
+                try {
+                    const year = getYearFromDate(dateStr);
+                    const data = {
+                        subject,
+                        dictamenDate: formatDateForStorage(dateStr),
+                        topic,
+                        assignedUser: user,
+                        expediente,
+                        content,
+                        firmaDefensor: firmaVal,
+                        firmaDefensorSubrogante: subrogante,
+                        year: year
+                    };
+
+                    if (editingId) {
+                        data.updatedAt = getTimestamp();
+                        await saveRecord(data, editingId);
+                        toast('Dictamen actualizado', 'success');
                     } else {
-                        createdAtContainer.style.display = 'none';
+                        const number = await getNextNumber();
+                        data.number = number;
+                        data.createdAt = getTimestamp();
+                        await saveRecord(data);
+                        toast('Dictamen creado', 'success');
                     }
-                    
-                    contentTextarea.value = record.content || '';
-                    updateWordCount();
-                    contentPages = [];
-                    currentContentPage = 1;
-                    updateContentPagination();
-                    
-                    recordModal.style.display = 'flex';
+                    closeFormModal();
+                    applyFiltersAndRender();
+                    populateYearFilter();
+                } catch (err) {
+                    console.error(err);
+                    toast('Error al guardar: ' + err.message, 'error');
                 }
-            }
-            
-            // Filtrar registros
-            function filterRecords() {
-                const searchText = searchInput.value.trim();
-                const selectedYear = yearFilter.value;
-                const selectedMonth = monthFilter.value;
-                const selectedTopic = topicFilter.value;
-                
-                const isNumberOnly = /^\d+$/.test(searchText);
-                
-                filteredRecords = records.filter(record => {
-                    const yearMatch = selectedYear === 'todos' || record.year.toString() === selectedYear;
-                    
-                    let monthMatch = selectedMonth === 'todos';
-                    if (selectedMonth !== 'todos') {
-                        const month = getMonthFromDate(record.dictamenDate);
-                        monthMatch = month.toString() === selectedMonth;
-                    }
-                    
-                    const topicMatch = selectedTopic === 'todos' || record.topic === selectedTopic;
-                    
-                    if (!searchText) {
-                        return yearMatch && monthMatch && topicMatch;
-                    }
-                    
-                    const searchLower = searchText.toLowerCase();
-                    
-                    if (isNumberOnly) {
-                        const numberMatch = record.number.toString() === searchText;
-                        if (numberMatch) return yearMatch && monthMatch && topicMatch && true;
-                    }
-                    
-                    const textMatch = 
-                        (record.subject && record.subject.toLowerCase().includes(searchLower)) ||
-                        (record.topic && record.topic.toLowerCase().includes(searchLower)) ||
-                        (record.assignedUser && record.assignedUser.toLowerCase().includes(searchLower)) ||
-                        (record.expediente && record.expediente.toLowerCase().includes(searchLower)) ||
-                        (record.content && record.content.toLowerCase().includes(searchLower)) ||
-                        (record.firmaDefensor && record.firmaDefensor.toLowerCase().includes(searchLower)) ||
-                        (record.firmaDefensorSubrogante && record.firmaDefensorSubrogante.toLowerCase().includes(searchLower)) ||
-                        (record.year && record.year.toString().toLowerCase().includes(searchLower)) ||
-                        (formatDateForDisplay(record.dictamenDate) && formatDateForDisplay(record.dictamenDate).toLowerCase().includes(searchLower)) ||
-                        (!isNumberOnly && record.number.toString().toLowerCase().includes(searchLower));
-                    
-                    return yearMatch && monthMatch && topicMatch && textMatch;
-                });
-                
-                currentPage = 1;
-                updateTrimestreStats();
-                updateMonthlyStats();
-                renderTable();
-            }
-            
-            // Ver todos los registros en el modal de contenido
-            function viewAllRecords() {
-                if (records.length === 0) {
-                    showNotification('No hay registros para mostrar.', 'error');
-                    return;
-                }
+                showSpinner(false);
+            });
+        }
 
-                let allContent = '';
-
-                records.forEach(record => {
-                    const formattedContent = record.content ? record.content.replace(/\n/g, '<br>') : '';
-                    
-                    let registroDisplay = 'No disponible';
-                    if (record.createdAt) {
-                        registroDisplay = formatDateTimeArgentina(record.createdAt);
-                    }
-                    
-                    let firmaText = '';
-                    if (record.firmaDefensor === 'No' && record.firmaDefensorSubrogante) {
-                        firmaText = `<strong>Firma Defensor Titular:</strong> No<br><strong>Firma Defensor Subrogante:</strong> ${record.firmaDefensorSubrogante}`;
-                    } else if (record.firmaDefensor) {
-                        firmaText = `<strong>Firma Defensor Titular:</strong> ${record.firmaDefensor}`;
-                    }
-                    
-                    allContent += `
-                        <h3>Dictamen ${record.number}/${record.year}</h3>
-                        <p><strong>Asunto:</strong> ${record.subject}</p>
-                        <p><strong>Fecha de Dictamen:</strong> ${formatDateForDisplay(record.dictamenDate)}</p>
-                        <p><strong>Temática:</strong> ${record.topic || 'Sin especificar'}</p>
-                        <p><strong>Usuario asignado:</strong> ${record.assignedUser || 'No asignado'}</p>
-                        <p>${firmaText}</p>
-                        <p><strong>Expediente:</strong> ${record.expediente || 'No especificado'}</p>
-                        <p><strong>Registrado el:</strong> ${registroDisplay}</p>
-                        <p><strong>Contenido:</strong> ${formattedContent}</p>
-                        <hr>
-                    `;
-                });
-
-                document.getElementById('contentNumber').textContent = 'Todos';
-                document.getElementById('contentSubject').textContent = 'Lista completa de dictámenes';
-                document.getElementById('contentDictamenDate').textContent = '';
-                document.getElementById('contentTopic').textContent = '';
-                document.getElementById('contentAssignedUser').textContent = '';
-                document.getElementById('contentExpediente').textContent = '';
-                document.getElementById('contentCreatedAt').textContent = '';
-                document.getElementById('firmaContainer').innerHTML = '';
-                document.getElementById('fullContent').innerHTML = allContent;
-                contentModal.style.display = 'flex';
-            }
-            
-            // Inicializar la aplicación
-            init();
-        });
+        // ============================================================
+        // INICIO
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
